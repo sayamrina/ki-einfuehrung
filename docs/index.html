@@ -43,9 +43,19 @@ figure img { width:100%; height:auto; border:1px solid var(--line); border-radiu
 figcaption { font-size:14px; color:var(--muted); margin-top:6px; }
 .two { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .note { color:var(--muted); font-size:14px; }
+.tour { display:grid; gap:12px; padding:0; margin:0; list-style:none; counter-reset:tour; }
+.tour li { display:grid; grid-template-columns:40px 1fr; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px; counter-increment:tour; }
+.tour li::before { content:counter(tour); display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:var(--accent); color:var(--bg); font-weight:700; }
+.tour h3 { margin:0 0 3px; font-size:16.5px; }
+.tour p { margin:0; font-size:15px; color:var(--muted); }
+.ui { display:inline-block; padding:0 7px; border:1px solid var(--line); border-radius:6px; background:var(--soft); color:var(--ink); font-size:14px; font-weight:600; white-space:nowrap; }
+.role { display:inline-block; padding:1px 9px; border-radius:99px; background:var(--soft); color:var(--accent); font-size:12.5px; font-weight:700; margin-left:6px; vertical-align:2px; }
+.tips { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px; }
+.tip { border-left:3px solid var(--accent); padding:4px 0 4px 12px; font-size:15px; }
+.tip b { display:block; }
 footer { padding:28px 0 56px; color:var(--muted); font-size:14px; }
 [data-lang="en"] .de, [data-lang="de"] .en { display:none; }
-@media (max-width:760px) { .cycle, .two { grid-template-columns:1fr; } header { padding-top:40px; } .lead { font-size:17px; } }
+@media (max-width:760px) { .cycle, .two, .tips { grid-template-columns:1fr; } header { padding-top:40px; } .lead { font-size:17px; } }
 </style>
 </head>
 <body data-lang="de">
@@ -65,12 +75,34 @@ footer { padding:28px 0 56px; color:var(--muted); font-size:14px; }
       <div><strong>Amrina</strong><div class="byline">M.Sc. Educational Technology, <span class="de">Universität des Saarlandes</span><span class="en">Saarland University</span> · <a href="https://sayamrina.github.io/">Portfolio</a></div></div>
     </div>
     <div class="btns">
-      <a class="btn primary" href="https://ki-einfuehrung.streamlit.app/"><span class="de">App ausprobieren</span><span class="en">Try the live app</span></a>
+      <a class="btn primary" href="https://ki-einfuehrung-amrina.streamlit.app/"><span class="de">App ausprobieren</span><span class="en">Try the live app</span></a>
+      <a class="btn" href="#how-to-use"><span class="de">So funktioniert es</span><span class="en">How to use it</span></a>
       <a class="btn" href="https://github.com/sayamrina/ki-einfuehrung"><span class="de">Code auf GitHub</span><span class="en">Code on GitHub</span></a>
       <a class="btn" href="https://sayamrina.github.io/"><span class="de">Mein Portfolio</span><span class="en">My portfolio</span></a>
     </div>
   </div>
 </header>
+
+<section id="how-to-use">
+  <div class="wrap">
+    <h2><span class="de">So nutzen Sie die App</span><span class="en">How to use this app</span></h2>
+    <p class="sub"><span class="de">Ein kurzer Rundgang in etwa fünf Minuten. Sie spielen nacheinander drei Personen im Unternehmen und begleiten eine Idee vom Vorschlag bis zur Entscheidung.</span><span class="en">A short tour of about five minutes. You play three people in a company one after another and follow one idea from suggestion to decision.</span></p>
+    <ol class="tour">
+      <li><div><h3><span class="de">App öffnen</span><span class="en">Open the app</span></h3><p><span class="de">Klicken Sie oben auf <span class="ui">App ausprobieren</span>. Eine Anmeldung ist nicht nötig. Links sehen Sie die Seitenleiste mit dem Menü (auf dem Handy: oben links auf <span class="ui">&gt;</span> tippen).</span><span class="en">Click <span class="ui">Try the live app</span> above. No sign-in is needed. On the left you see the sidebar with the menu (on a phone: tap <span class="ui">&gt;</span> at the top left).</span></p></div></li>
+      <li><div><h3><span class="de">Sprache und Rolle wählen</span><span class="en">Choose language and role</span></h3><p><span class="de">Unter <span class="ui">Sprache / Language</span> wählen Sie Deutsch oder English. Unter <span class="ui">Ich arbeite als …</span> wählen Sie, wer Sie in der App sind. Jede Rolle sieht nur die Knöpfe, die sie benutzen darf.</span><span class="en">Under <span class="ui">Sprache / Language</span> pick Deutsch or English. Under <span class="ui">I work as …</span> pick who you are in the app. Each role only gets the buttons it is allowed to use.</span></p></div></li>
+      <li><div><h3><span class="de">Eine Idee einreichen</span><span class="en">Submit an idea</span><span class=role><span class="de">Rolle: Fachbereich</span><span class="en">Role: Business unit</span></span></h3><p><span class="de">Öffnen Sie <span class="ui">Idee einreichen</span>. Ein Beispieltext ist schon eingetragen. Klicken Sie auf <span class="ui">Mit KI strukturieren</span>. Sie sehen, dass Name, Telefonnummer und Kennzeichen vorher ersetzt werden, und erhalten einen fertigen Steckbrief.</span><span class="en">Open <span class="ui">Submit an idea</span>. A sample text is already filled in. Click <span class="ui">Structure with AI</span>. You see that the name, phone number and licence plate are replaced first, and you get a ready brief.</span></p></div></li>
+      <li><div><h3><span class="de">Datenschutz prüfen</span><span class="en">Check data protection</span><span class=role><span class="de">Rolle: Datenschutz</span><span class="en">Role: Data protection</span></span></h3><p><span class="de">Wechseln Sie die Rolle. Öffnen Sie <span class="ui">Anwendungsfall bearbeiten</span>, wählen Sie Ihre neue Idee (der letzte Buchstabe in der Liste) und den Reiter <span class="ui">Datenschutz-Check</span>. Schalten Sie die Fragen an oder aus: die Ampel ändert sich sofort. Klicken Sie auf <span class="ui">Freigeben</span>.</span><span class="en">Switch the role. Open <span class="ui">Work on a use case</span>, pick your new idea (the last letter in the list) and the <span class="ui">Data protection check</span> tab. Switch the questions on or off: the traffic light changes right away. Click <span class="ui">Approve</span>.</span></p></div></li>
+      <li><div><h3><span class="de">Entscheiden</span><span class="en">Decide</span><span class=role><span class="de">Rolle: Geschäftsführung</span><span class="en">Role: Management</span></span></h3><p><span class="de">Wechseln Sie die Rolle noch einmal und öffnen Sie den Reiter <span class="ui">Entscheidung</span>. Wählen Sie <span class="ui">Freigeben</span>, schreiben Sie einen kurzen Grund und klicken Sie auf <span class="ui">Entscheidung festhalten</span>. Die Entscheidungsvorlage können Sie als PDF herunterladen.</span><span class="en">Switch the role once more and open the <span class="ui">Decision</span> tab. Choose <span class="ui">Approve</span>, write a short reason and click <span class="ui">Record decision</span>. You can download the decision paper as a PDF.</span></p></div></li>
+      <li><div><h3><span class="de">Ergebnis ansehen</span><span class="en">See the result</span><span class=role><span class="de">jede Rolle</span><span class="en">any role</span></span></h3><p><span class="de">In der <span class="ui">Übersicht</span> steht Ihre Idee jetzt in der Spalte „In Umsetzung“. Unter <span class="ui">Protokoll und Rechte</span> ist jeder Ihrer Schritte mit Rolle und Datum festgehalten.</span><span class="en">On the <span class="ui">Dashboard</span> your idea now sits in the "In progress" column. Under <span class="ui">Log and rights</span> every step you took is recorded with role and date.</span></p></div></li>
+      <li><div><h3><span class="de">KI-Führerschein machen</span><span class="en">Take the AI licence</span><span class=role><span class="de">jede Rolle</span><span class="en">any role</span></span></h3><p><span class="de">Öffnen Sie <span class="ui">KI-Führerschein</span>, lesen Sie die vier kurzen Module und beantworten Sie im Reiter <span class="ui">Abschlusstest</span> fünf Fragen. Ab 80 % erhalten Sie ein Zertifikat als PDF.</span><span class="en">Open <span class="ui">AI licence</span>, read the four short modules and answer five questions in the <span class="ui">Final test</span> tab. With 80 % or more you get a PDF certificate.</span></p></div></li>
+    </ol>
+    <div class="tips">
+      <div class="tip"><span class="de"><b>🔒 Knopf gesperrt?</b>Dann gehört der Schritt zu einer anderen Rolle. Der Hinweis darunter sagt, zu welcher.</span><span class="en"><b>🔒 Button locked?</b>Then the step belongs to another role. The note below tells you which one.</span></div>
+      <div class="tip"><span class="de"><b>Nichts kann kaputtgehen</b>Alles sind Beispieldaten. Nichts wird gespeichert; Neu laden setzt die App zurück.</span><span class="en"><b>Nothing can break</b>Everything is sample data. Nothing is stored; reloading resets the app.</span></div>
+      <div class="tip"><span class="de"><b>Auf einen Blick</b>Die Seite <span class=ui>Über das Projekt</span> in der App erklärt alle neun Schritte kurz.</span><span class="en"><b>At a glance</b>The <span class=ui>About the project</span> page in the app explains all nine steps briefly.</span></div>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="wrap">

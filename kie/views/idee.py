@@ -36,7 +36,7 @@ def render() -> None:
         clean, counts = pseudonymise(text)
         with st.expander(T("Text, der an das Sprachmodell geht (pseudonymisiert)", "Text sent to the language model (pseudonymised)"),
                          expanded=bool(counts)):
-            st.code(clean, language=None)
+            st.code(clean, language=None, wrap_lines=True)
             if counts:
                 st.caption(T("Vor dem Modellaufruf ersetzt: ", "Replaced before the model call: ")
                            + ", ".join(f"{v}× {k}" for k, v in counts.items()))

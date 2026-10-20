@@ -2,13 +2,17 @@
 
 [![CI](https://github.com/sayamrina/ki-einfuehrung/actions/workflows/ci.yml/badge.svg)](https://github.com/sayamrina/ki-einfuehrung/actions/workflows/ci.yml)
 
-**KI-Projekt 2026** · [Live-App](https://ki-einfuehrung.streamlit.app/) · [Projektseite](https://sayamrina.github.io/ki-einfuehrung/) · [Portfolio](https://sayamrina.github.io/)
+**KI-Projekt 2026** · [Live-App](https://ki-einfuehrung-amrina.streamlit.app/) · [Projektseite](https://sayamrina.github.io/ki-einfuehrung/) · [Portfolio](https://sayamrina.github.io/)
 
 Eine Plattform, die den gesamten Arbeitszyklus eines AI Solutions Managers abbildet: Ideen aus dem Fachbereich aufnehmen, Prozesse und Datenschutz prüfen, Anwendungsfälle bewerten, Entscheidungen vorbereiten, Ergebnisse testen, Mitarbeitende schulen und neue Werkzeuge beobachten. Die Oberfläche ist auf Deutsch (Standard) und Englisch verfügbar.
 
 *English: a platform that mirrors the whole work cycle of an AI Solutions Manager, from the first idea of a business unit to data protection, assessment, decision, testing, training and rollout. German is the default language; English can be selected in the sidebar.*
 
 ![Übersicht mit Projekt-Board](docs/img/dashboard.png)
+
+## So nutzen Sie die App
+
+Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Projektseite](https://sayamrina.github.io/ki-einfuehrung/#how-to-use): als **Fachbereich** eine Idee einreichen, als **Datenschutz** prüfen und freigeben, als **Geschäftsführung** entscheiden und danach das Ergebnis in der Übersicht und im Protokoll ansehen. Die Rolle wechseln Sie links in der Seitenleiste.
 
 ## Der Arbeitszyklus
 
