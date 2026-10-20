@@ -53,7 +53,8 @@ def render() -> None:
             "faelle_pro_monat": int(cases), "steckbrief": {k: sb.get(k) for k in (
                 "problem", "ziel", "nutzende", "daten", "schnittstellen", "erfolgskriterien", "datenschutz_hinweise", "offene_fragen")},
             "prozess": [], "bewertung": {"nutzen": 3, "aufwand": 3, "umsetzbarkeit": 3, "risiko": 3},
-            "datenschutz": {"antworten": {}, "freigabe": "offen", "kommentar": ""}, "entscheidung": {}, "tests": [], "grenzen": ""})
+            "datenschutz": {"antworten": {}, "freigabe": "offen", "kommentar": ""},
+            "it": state.it_seed("-", lang()), "entscheidung": {}, "tests": [], "grenzen": ""})
         state.log(uid, T("Idee eingereicht", "Idea submitted"), area)
         st.success(T(f"Als Anwendungsfall {uid} angelegt. Weiter unter „Anwendungsfall bearbeiten“.",
                      f"Created as use case {uid}. Continue under \"Work on a use case\"."))

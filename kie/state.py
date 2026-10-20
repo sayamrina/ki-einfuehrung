@@ -7,7 +7,7 @@ import streamlit as st
 from . import seed, seed_en
 from .i18n import T, role
 
-ROLES = ["Fachbereich", "AI Manager", "Datenschutz", "Geschäftsführung"]
+ROLES = ["Fachbereich", "AI Manager", "Datenschutz", "IT", "Geschäftsführung"]
 
 # Wer darf was? (wird in der Oberfläche durchgesetzt und auf der Seite „Protokoll und Rechte“ angezeigt)
 RIGHTS = {
@@ -16,10 +16,11 @@ RIGHTS = {
     "prozess_bearbeiten": {"Fachbereich", "AI Manager"},
     "bewerten": {"AI Manager"},
     "datenschutz_freigeben": {"Datenschutz"},
+    "it_freigeben": {"IT"},
     "entscheiden": {"Geschäftsführung"},
-    "testen": {"AI Manager", "Fachbereich"},
+    "testen": {"AI Manager", "Fachbereich", "IT"},
     "status_aendern": {"AI Manager"},
-    "radar_bearbeiten": {"AI Manager"},
+    "radar_bearbeiten": {"AI Manager", "IT"},
 }
 RIGHT_LABELS = {
     "idee_einreichen": ("Idee einreichen", "Submit an idea"),
@@ -27,12 +28,32 @@ RIGHT_LABELS = {
     "prozess_bearbeiten": ("Prozess aufnehmen", "Map the process"),
     "bewerten": ("Anwendungsfall bewerten", "Assess the use case"),
     "datenschutz_freigeben": ("Datenschutz freigeben", "Approve data protection"),
+    "it_freigeben": ("Technisch freigeben (IT-Check)", "Technical approval (IT check)"),
     "entscheiden": ("Über Umsetzung entscheiden", "Decide on implementation"),
     "testen": ("Prüfstand: Tests ausführen", "Test bench: run tests"),
     "status_aendern": ("Projektstatus ändern", "Change project status"),
     "radar_bearbeiten": ("KI-Radar pflegen", "Maintain the AI radar"),
 }
 MAX_LLM_CALLS = 20
+
+# IT-Check der Beispieldaten (gleich für beide Sprachen, Texte je Sprache)
+_ALL = {"schnittstelle": True, "hosting": True, "anmeldung": True, "betrieb": True, "kosten": True}
+IT_SEED = {
+    "A": (_ALL, "freigegeben", 12, ("Dokumentenablage (SharePoint), Intranet", "Document store (SharePoint), intranet"),
+          ("Läuft im EU-Rechenzentrum, Monitoring aktiv.", "Runs in an EU data centre, monitoring active.")),
+    "C": (_ALL | {"betrieb": False}, "offen", 15, ("Service-Postfach, Mitgliederverwaltung", "Service mailbox, member database"),
+          ("", "")),
+    "D": (_ALL, "freigegeben", 6, ("Lernplattform (LMS)", "Learning platform (LMS)"),
+          ("Unkritisch, keine Kundendaten.", "Not critical, no customer data.")),
+}
+
+
+def it_seed(uid: str, lang: str) -> dict:
+    if uid not in IT_SEED:
+        return {"antworten": {}, "systeme": "", "personentage": 0, "freigabe": "offen", "kommentar": ""}
+    answers, release, days, systems, comment = IT_SEED[uid]
+    i = 1 if lang == "en" else 0
+    return {"antworten": dict(answers), "systeme": systems[i], "personentage": days, "freigabe": release, "kommentar": comment[i]}
 
 
 def load_sample_data(lang: str) -> None:
@@ -41,6 +62,8 @@ def load_sample_data(lang: str) -> None:
     s.usecases = copy.deepcopy(src.usecases())
     s.log = copy.deepcopy(src.log())
     s.radar = copy.deepcopy(src.radar())
+    for u in s.usecases:
+        u.setdefault("it", it_seed(u["id"], lang))
     s.course_stats = copy.deepcopy(seed.course_stats())
     s.quiz_result = None
     s.data_lang = lang

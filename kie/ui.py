@@ -37,6 +37,20 @@ def ampel_badge(level: str) -> tuple[str, str]:
     return AMPEL_BADGE[lang()][level]
 
 
+IT_BADGE = {
+    "de": {"gruen": ("🟢 IT: bereit", "ok"), "gelb": ("🟡 IT: teilweise", "warn"), "rot": ("🔴 IT: nicht bereit", "bad"),
+           "offen": ("⚪ IT: offen", "")},
+    "en": {"gruen": ("🟢 IT: ready", "ok"), "gelb": ("🟡 IT: partly", "warn"), "rot": ("🔴 IT: not ready", "bad"),
+           "offen": ("⚪ IT: open", "")},
+}
+
+
+def it_badge(level: str) -> tuple[str, str]:
+    from .i18n import lang
+
+    return IT_BADGE[lang()][level]
+
+
 def esc(text) -> str:
     return html.escape(str(text))
 

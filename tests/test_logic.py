@@ -49,3 +49,13 @@ def test_pdf_exports():
     ucs = seed.usecases()
     assert pdf.entscheidungsvorlage(ucs[1], 5).startswith(b"%PDF")
     assert pdf.zertifikat("Test", 0.8).startswith(b"%PDF")
+
+
+def test_it_status_levels():
+    from kie.scoring import IT_CHECKS, it_status
+
+    assert it_status({})[0] == "offen"
+    assert it_status({c[0]: True for c in IT_CHECKS})[0] == "gruen"
+    assert it_status({"schnittstelle": True, "hosting": True, "anmeldung": True})[0] == "gelb"
+    level, done, hints = it_status({"schnittstelle": True})
+    assert level == "rot" and done == 1 and len(hints) == 4

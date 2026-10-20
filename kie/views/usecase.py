@@ -8,7 +8,7 @@ from .. import llm, pdf, state, ui
 from ..i18n import T, decision, lang, release, role, status, verdict
 from ..knowledge import Index, load_sections
 from ..privacy import pseudonymise
-from ..scoring import AMPEL_LABEL, DS_MEASURES, DS_QUESTIONS, ampel, ranking, score, time_saving
+from ..scoring import AMPEL_LABEL, DS_MEASURES, DS_QUESTIONS, IT_CHECKS, IT_LABEL, ampel, it_status, ranking, score, time_saving
 from ..seed import STATUSES
 
 DATA = Path(__file__).resolve().parents[2] / "data"
@@ -24,19 +24,20 @@ def knowledge_index(language: str) -> Index:
 def render() -> None:
     ucs = st.session_state.usecases
     ui.hero(T("Anwendungsfall bearbeiten", "Work on a use case"),
-            T("Steckbrief, Prozess, Datenschutz, Bewertung, Entscheidung und Tests: jeder Schritt wird festgehalten.",
-              "Brief, process, data protection, assessment, decision and tests: every step is recorded."))
+            T("Steckbrief, Prozess, Datenschutz, IT, Bewertung, Entscheidung und Tests: jeder Schritt wird festgehalten.",
+              "Brief, process, data protection, IT, assessment, decision and tests: every step is recorded."))
     labels = {u["id"]: f'{u["id"]}. {u["titel"]} ({status(u["status"])})' for u in ucs}
     uid = st.selectbox(T("Anwendungsfall", "Use case"), list(labels), format_func=labels.get, key="uc_select")
     uc = state.usecase(uid)
     rank = ranking(ucs)[uid]
     level = ampel(uc["datenschutz"].get("antworten", {}), lang())[0]
     text, kind = ui.ampel_badge(level)
+    it_text, it_kind = ui.it_badge(it_status(uc["it"].get("antworten", {}), lang())[0])
     st.markdown(ui.badge(uc["fachbereich"]) + ui.badge(f"Status: {status(uc['status'])}") + ui.badge(T("Rang ", "Rank ") + str(rank))
-                + ui.badge(text, kind), unsafe_allow_html=True)
+                + ui.badge(text, kind) + ui.badge(it_text, it_kind), unsafe_allow_html=True)
 
     tabs = st.tabs([T("Steckbrief", "Brief"), T("Prozessaufnahme", "Process mapping"), T("Datenschutz-Check", "Data protection check"),
-                    T("Bewertung", "Assessment"), T("Entscheidung", "Decision"), T("Prüfstand", "Test bench"), T("Verlauf", "History")])
+                    T("IT-Check", "IT check"), T("Bewertung", "Assessment"), T("Entscheidung", "Decision"), T("Prüfstand", "Test bench"), T("Verlauf", "History")])
     with tabs[0]:
         steckbrief(uc)
     with tabs[1]:
@@ -44,12 +45,14 @@ def render() -> None:
     with tabs[2]:
         datenschutz(uc)
     with tabs[3]:
-        bewertung(uc, rank)
+        it_check(uc)
     with tabs[4]:
-        entscheidung(uc, rank)
+        bewertung(uc, rank)
     with tabs[5]:
-        pruefstand(uc)
+        entscheidung(uc, rank)
     with tabs[6]:
+        pruefstand(uc)
+    with tabs[7]:
         verlauf(uc)
 
 
@@ -145,6 +148,48 @@ def datenschutz(uc: dict) -> None:
         state.deny_hint("datenschutz_freigeben")
 
 
+def it_check(uc: dict) -> None:
+    it = uc["it"]
+    answers = dict(it.get("antworten") or {})
+    en = lang() == "en"
+    editable = state.can("it_freigeben")
+    st.markdown(T("Die IT prüft, ob die Lösung technisch angebunden und sicher betrieben werden kann.",
+                  "IT checks whether the solution can be connected and run safely."))
+    c = st.columns([2, 1])
+    systems = c[0].text_input(T("Beteiligte Systeme", "Systems involved"), it.get("systeme", ""), disabled=not editable,
+                              key=f"it_sys_{uc['id']}")
+    days = c[1].number_input(T("Aufwand in Personentagen", "Effort in person-days"), 0, 500, int(it.get("personentage", 0)),
+                             disabled=not editable, key=f"it_days_{uc['id']}")
+    st.markdown(f"**{T('Technische Bereitschaft', 'Technical readiness')}**")
+    for chk in IT_CHECKS:
+        answers[chk[0]] = st.toggle(chk[2] if en else chk[1], answers.get(chk[0], False), disabled=not editable,
+                                    key=f"it_{uc['id']}_{chk[0]}")
+    level, done, hints = it_status(answers, lang())
+    kind = {"gruen": "success", "gelb": "warning", "rot": "error", "offen": "info"}[level]
+    getattr(st, kind)(f"{IT_LABEL[lang()][level]} ({done} {T('von', 'of')} {len(IT_CHECKS)})")
+    for hint in hints:
+        st.markdown(f"- {hint}")
+    st.divider()
+    st.markdown(f"**{T('Technische Freigabe durch die IT', 'Technical approval by IT')}:** {release(it.get('freigabe', 'offen'))}"
+                + (f" · {it['kommentar']}" if it.get("kommentar") else ""))
+    if editable:
+        comment = st.text_input(T("Kommentar / Auflagen", "Comment / conditions"), key=f"it_comment_{uc['id']}")
+        a, b = st.columns(2)
+        if a.button(T("IT freigeben", "IT approve"), key=f"it_ok_{uc['id']}", disabled=level in ("rot", "offen") and not comment):
+            it.update(freigabe="freigegeben", kommentar=comment, antworten=answers, systeme=systems, personentage=int(days))
+            state.log(uc["id"], T("IT freigegeben", "IT approved"), comment or IT_LABEL[lang()][level])
+            st.rerun()
+        if b.button(T("IT nicht freigeben", "IT do not approve"), key=f"it_no_{uc['id']}"):
+            it.update(freigabe="nicht freigegeben", kommentar=comment, antworten=answers, systeme=systems, personentage=int(days))
+            state.log(uc["id"], T("IT nicht freigegeben", "IT not approved"), comment)
+            st.rerun()
+        if level in ("rot", "offen"):
+            st.caption(T("Solange wichtige Punkte offen sind, ist eine Freigabe nur mit dokumentierten Auflagen möglich.",
+                         "While important points are open, approval is only possible with documented conditions."))
+    else:
+        state.deny_hint("it_freigeben")
+
+
 def bewertung(uc: dict, rank: int) -> None:
     editable = state.can("bewerten")
     b = dict(uc["bewertung"])
@@ -179,17 +224,20 @@ def entscheidung(uc: dict, rank: int) -> None:
                   f"Decision of {d['datum']}: **{decision(d['ergebnis'])}**. {d['begruendung']}"))
     if state.can("entscheiden"):
         ds_ok = uc["datenschutz"].get("freigabe") == "freigegeben"
-        if not ds_ok:
-            st.warning(T("Der Datenschutz hat noch nicht freigegeben. Eine Freigabe zur Umsetzung ist erst danach möglich.",
-                         "Data protection has not approved yet. Approval for implementation is only possible afterwards."))
+        it_ok = uc["it"].get("freigabe") == "freigegeben"
+        missing = [x for x, ok in [(T("Datenschutz", "data protection"), ds_ok), ("IT", it_ok)] if not ok]
+        if missing:
+            st.warning(T(f"Noch keine Freigabe von: {' und '.join(missing)}. Eine Umsetzung ist erst danach möglich.",
+                         f"No approval yet from: {' and '.join(missing)}. Implementation is only possible afterwards."))
         options = {"Freigegeben": T("Freigeben", "Approve"), "Zurückgestellt": T("Zurückstellen", "Put on hold"),
                    "Abgelehnt": T("Ablehnen", "Reject")}
         with st.form(f"dec_{uc['id']}"):
             result = st.radio(T("Entscheidung", "Decision"), list(options), format_func=options.get, horizontal=True)
             reason = st.text_area(T("Begründung", "Reason"), height=70)
             if st.form_submit_button(T("Entscheidung festhalten", "Record decision"), type="primary"):
-                if result == "Freigegeben" and not ds_ok:
-                    st.error(T("Freigabe nicht möglich: Datenschutz-Freigabe fehlt.", "Approval not possible: data protection approval is missing."))
+                if result == "Freigegeben" and missing:
+                    st.error(T(f"Freigabe nicht möglich: Freigabe von {' und '.join(missing)} fehlt.",
+                               f"Approval not possible: approval from {' and '.join(missing)} is missing."))
                 elif not reason.strip():
                     st.error(T("Bitte kurz begründen, damit die Entscheidung nachvollziehbar bleibt.",
                                "Please give a short reason so the decision stays traceable."))

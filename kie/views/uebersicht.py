@@ -4,7 +4,7 @@ import streamlit as st
 
 from .. import ui
 from ..i18n import T, lang, status
-from ..scoring import ampel, ranking, score, time_saving
+from ..scoring import ampel, it_status, ranking, score, time_saving
 
 
 def render() -> None:
@@ -35,6 +35,8 @@ def render() -> None:
                 text, kind = ui.ampel_badge(level)
                 badges = (ui.badge(status(u["status"])) + ui.badge(T("Rang ", "Rank ") + str(ranks[u["id"]]))
                           + f'<div class="kie-ampel {kind}">{ui.esc(text)}</div>')
+                it_text, it_kind = ui.it_badge(it_status(u["it"].get("antworten", {}), lang())[0])
+                badges += f'<div class="kie-ampel {it_kind}">{ui.esc(it_text)}</div>'
                 st.markdown(f'<div class="kie-card" lang="{lang()}"><h4>{u["id"]}. {ui.esc(u["titel"])}</h4>'
                             f'<div class="kie-muted">{ui.esc(u["fachbereich"])}</div>{badges}</div>', unsafe_allow_html=True)
             if not items:

@@ -72,3 +72,39 @@ AMPEL_LABEL = {
     "de": {"offen": "⚪ Offen: Check ausstehend", "gruen": "🟢 Grün: unkritisch", "gelb": "🟡 Gelb: mit Auflagen", "rot": "🔴 Rot: nicht ohne Freigabe"},
     "en": {"offen": "⚪ Open: check pending", "gruen": "🟢 Green: not critical", "gelb": "🟡 Amber: with conditions", "rot": "🔴 Red: not without approval"},
 }
+
+# IT-Check: technische Bereitschaft (Antwort "Ja" ist gut): (Schlüssel, DE, EN, Hinweis DE, Hinweis EN)
+IT_CHECKS = [
+    ("schnittstelle", "Die nötigen Systeme sind über eine Schnittstelle (API) erreichbar.",
+     "The required systems can be reached through an interface (API).",
+     "Schnittstelle mit dem Anbieter klären oder einen manuellen Zwischenschritt einplanen.",
+     "Clarify the interface with the vendor or plan a manual step in between."),
+    ("hosting", "Das Hosting ist geklärt (Cloud in der EU oder eigener Server).",
+     "Hosting is settled (cloud in the EU or own server).",
+     "Hosting festlegen; bei sensiblen Daten ein lokales Modell prüfen.", "Decide on hosting; for sensitive data consider a local model."),
+    ("anmeldung", "Die Anmeldung läuft über das Firmenkonto (z. B. Microsoft Entra ID).",
+     "Sign-in uses the company account (e.g. Microsoft Entra ID).",
+     "Anbindung an die Firmenanmeldung einplanen, keine eigenen Passwörter.", "Plan the link to the company sign-in, no separate passwords."),
+    ("betrieb", "Der Betrieb ist geregelt: Monitoring, Backups und eine Ansprechperson bei Störungen.",
+     "Operations are covered: monitoring, backups and a contact person for incidents.",
+     "Zuständigkeit für Betrieb und Störungen festlegen, bevor es live geht.", "Assign who runs it and handles incidents before go-live."),
+    ("kosten", "Die laufenden Kosten (Modellnutzung, Hosting) sind geschätzt und im Budget.",
+     "Running costs (model usage, hosting) are estimated and within budget.",
+     "Kosten pro Monat schätzen und mit dem Budget abgleichen.", "Estimate monthly costs and check them against the budget."),
+]
+
+
+def it_status(answers: dict, lang: str = "de") -> tuple[str, int, list[str]]:
+    """Gibt (offen|gruen|gelb|rot, erfüllte Punkte, offene Hinweise) zurück."""
+    if not answers:
+        return "offen", 0, ["IT-Check noch nicht ausgefüllt." if lang == "de" else "IT check not completed yet."]
+    done = sum(1 for c in IT_CHECKS if answers.get(c[0]))
+    hints = [c[3] if lang == "de" else c[4] for c in IT_CHECKS if not answers.get(c[0])]
+    level = "gruen" if done == len(IT_CHECKS) else "gelb" if done >= 3 else "rot"
+    return level, done, hints
+
+
+IT_LABEL = {
+    "de": {"offen": "⚪ Offen: Check ausstehend", "gruen": "🟢 Bereit für den Betrieb", "gelb": "🟡 Teilweise bereit", "rot": "🔴 Noch nicht bereit"},
+    "en": {"offen": "⚪ Open: check pending", "gruen": "🟢 Ready for operation", "gelb": "🟡 Partly ready", "rot": "🔴 Not ready yet"},
+}

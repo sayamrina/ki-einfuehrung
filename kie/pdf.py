@@ -5,7 +5,7 @@ from pathlib import Path
 from fpdf import FPDF
 
 from .i18n import DECISION_EN, DS_RELEASE_EN, STATUS_EN
-from .scoring import AMPEL_LABEL, ampel, score, time_saving
+from .scoring import AMPEL_LABEL, IT_LABEL, ampel, it_status, score, time_saving
 
 FONTS = Path(__file__).resolve().parent.parent / "assets"
 NAVY = (18, 53, 91)
@@ -52,6 +52,9 @@ def entscheidungsvorlage(uc: dict, rank: int, lang: str = "de") -> bytes:
     b = uc["bewertung"]
     release = uc["datenschutz"].get("freigabe", "offen")
     release = DS_RELEASE_EN.get(release, release) if en else release
+    it = uc.get("it", {})
+    it_release = it.get("freigabe", "offen")
+    it_release = DS_RELEASE_EN.get(it_release, it_release) if en else it_release
     rows = [
         ("Problem", sb.get("problem", "")), (t("Ziel", "Goal"), sb.get("ziel", "")), (t("Nutzende", "Users"), sb.get("nutzende", "")),
         (t("Daten", "Data"), sb.get("daten", "")), (t("Schnittstellen", "Systems"), sb.get("schnittstellen", "")),
@@ -65,6 +68,8 @@ def entscheidungsvorlage(uc: dict, rank: int, lang: str = "de") -> bytes:
            f"{saving.minutes_before:g} → {saving.minutes_after:g} minutes per case; about {saving.hours_per_month:g} hours per month "
            f"at {uc['faelle_pro_monat']} cases")),
         (t("Datenschutz", "Data protection"), f"{_clean(AMPEL_LABEL[lang][level])}; {t('Freigabe', 'Approval')}: {release}"),
+        ("IT", f"{_clean(IT_LABEL[lang][it_status(it.get('antworten', {}), lang)[0]])}; {t('Freigabe', 'Approval')}: {it_release}"
+               + (f"; {it['systeme']}" if it.get("systeme") else "")),
         (t("Erfolgskriterien", "Success criteria"), "\n".join(f"• {k}" for k in sb.get("erfolgskriterien", []))),
         (t("Offene Fragen", "Open questions"), "\n".join(f"• {k}" for k in sb.get("offene_fragen", []))),
     ]

@@ -8,9 +8,9 @@ ABOUT_DE = """
 
 1. **Idee einreichen:** Der Fachbereich beschreibt ein Problem in eigenen Worten; die KI strukturiert es zu einem Steckbrief. Personenbezogene Daten werden vorher entfernt.
 2. **Prozessaufnahme:** Arbeitsschritte und Zeiten heute und mit KI; daraus ergibt sich die geschätzte Zeitersparnis.
-3. **Datenschutz-Check:** Risiken und Schutzmaßnahmen ergeben eine Ampel; der Datenschutz gibt frei oder nicht.
+3. **Datenschutz- und IT-Check:** Risiken und Schutzmaßnahmen ergeben eine Datenschutz-Ampel. Die IT prüft Schnittstellen, Hosting, Anmeldung, Betrieb und Kosten. Beide geben frei oder nicht.
 4. **Bewertung:** Nutzen, Aufwand, Umsetzbarkeit und Risiko ergeben Punkte und einen Rang als Gesprächsgrundlage.
-5. **Entscheidung:** Die Geschäftsführung entscheidet mit Begründung; die Entscheidungsvorlage gibt es als PDF.
+5. **Entscheidung:** Die Geschäftsführung entscheidet mit Begründung, erst nach Freigabe durch Datenschutz und IT; die Entscheidungsvorlage gibt es als PDF.
 6. **Prüfstand:** Ergebnisse werden mit echten Testfragen geprüft, Grenzen werden dokumentiert.
 7. **90-Tage-Plan und Projekt-Board:** Jeder sieht, wo ein Vorhaben steht.
 8. **KI-Führerschein:** Schulung mit Abschlusstest, Zertifikat und Auswertung für Trainer.
@@ -29,9 +29,9 @@ ABOUT_EN = """
 
 1. **Submit an idea:** The business unit describes a problem in its own words; the AI turns it into a brief. Personal data is removed first.
 2. **Process mapping:** Work steps and times today and with AI; this gives the estimated time saving.
-3. **Data protection check:** Risks and safeguards give a traffic light; data protection approves or not.
+3. **Data protection and IT check:** Risks and safeguards give a data protection light. IT checks interfaces, hosting, sign-in, operations and costs. Both approve or not.
 4. **Assessment:** Benefit, effort, feasibility and risk give points and a rank as a basis for discussion.
-5. **Decision:** Management decides with a reason; the decision paper is available as a PDF.
+5. **Decision:** Management decides with a reason, only after data protection and IT have approved; the decision paper is available as a PDF.
 6. **Test bench:** Results are checked with real test questions, and limits are documented.
 7. **90-day plan and project board:** Everyone can see where a project stands.
 8. **AI licence:** Training with a final test, certificate and results for trainers.

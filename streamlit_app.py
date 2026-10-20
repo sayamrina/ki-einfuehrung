@@ -1,6 +1,6 @@
 """KI-Einführung / AI Adoption: Plattform, die den Arbeitsablauf eines AI Solutions Managers abbildet.
 
-Idee aus dem Fachbereich → KI-Steckbrief → Prozessaufnahme → Datenschutz-Check → Bewertung → Entscheidung
+Idee aus dem Fachbereich → KI-Steckbrief → Prozessaufnahme → Datenschutz- und IT-Check → Bewertung → Entscheidung
 → Prüfstand → Pilot → Schulung, mit Projekt-Board und Entscheidungsprotokoll. Deutsch ist Standard, Englisch wählbar.
 """
 import os

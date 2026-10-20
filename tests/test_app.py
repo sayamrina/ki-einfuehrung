@@ -59,3 +59,16 @@ def test_english_sample_data_and_labels(monkeypatch):
     assert not at.exception
     assert at.session_state["data_lang"] == "en"
     assert any(b.label == "Record decision" for b in at.button)
+
+
+def test_it_check_needed_before_approval(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    at = page("usecase", "IT")
+    assert not at.exception
+    assert any(b.label == "IT freigeben" for b in at.button)
+    at = page("usecase", "Datenschutz")
+    assert not any(b.label == "IT freigeben" for b in at.button)
+    # C: data protection approved, IT still open -> management cannot approve it
+    at = page("usecase", "Geschäftsführung")
+    at.selectbox(key="uc_select").set_value("C").run()
+    assert any("IT" in w.value for w in at.warning)

@@ -12,7 +12,7 @@ Eine Plattform, die den gesamten Arbeitszyklus eines AI Solutions Managers abbil
 
 ## So nutzen Sie die App
 
-Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Projektseite](https://sayamrina.github.io/ki-einfuehrung/#how-to-use): als **Fachbereich** eine Idee einreichen, als **Datenschutz** prüfen und freigeben, als **Geschäftsführung** entscheiden und danach das Ergebnis in der Übersicht und im Protokoll ansehen. Die Rolle wechseln Sie links in der Seitenleiste.
+Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Projektseite](https://sayamrina.github.io/ki-einfuehrung/#how-to-use): als **Fachbereich** eine Idee einreichen, als **Datenschutz** und als **IT** prüfen und freigeben, als **Geschäftsführung** entscheiden und danach das Ergebnis in der Übersicht und im Protokoll ansehen. Die Rolle wechseln Sie links in der Seitenleiste.
 
 ## Der Arbeitszyklus
 
@@ -20,20 +20,21 @@ Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Proj
 |---|---|---|
 | 1. Idee einreichen: Problem in eigenen Worten, die KI erstellt einen Steckbrief (personenbezogene Daten werden vorher ersetzt) | Idee einreichen | Fachbereich, AI Manager |
 | 2. Prozessaufnahme: Minuten pro Schritt heute und mit KI, daraus Zeitersparnis pro Monat | Anwendungsfall → Prozessaufnahme | Fachbereich, AI Manager |
-| 3. Datenschutz-Check: Risiken und Schutzmaßnahmen ergeben eine Ampel; Freigabe mit Auflagen | Anwendungsfall → Datenschutz-Check | Datenschutz |
+| 3a. Datenschutz-Check: Risiken und Schutzmaßnahmen ergeben eine Ampel; Freigabe mit Auflagen | Anwendungsfall → Datenschutz-Check | Datenschutz |
+| 3b. IT-Check: Schnittstellen, Hosting, Firmenanmeldung, Betrieb und Kosten; Aufwand in Personentagen; technische Freigabe | Anwendungsfall → IT-Check | IT |
 | 4. Bewertung: Nutzen + Umsetzbarkeit − Aufwand − Risiko ergibt Punkte und Rang | Anwendungsfall → Bewertung, Übersicht | AI Manager |
-| 5. Entscheidung mit Begründung, Entscheidungsvorlage als PDF | Anwendungsfall → Entscheidung | Geschäftsführung |
-| 6. Prüfstand: Wissensassistent mit Quellenangabe, Testfälle und Trefferquote, dokumentierte Grenzen | Anwendungsfall → Prüfstand | AI Manager, Fachbereich |
+| 5. Entscheidung mit Begründung, erst nach Freigabe durch Datenschutz und IT; Entscheidungsvorlage als PDF | Anwendungsfall → Entscheidung | Geschäftsführung |
+| 6. Prüfstand: Wissensassistent mit Quellenangabe, Testfälle und Trefferquote, dokumentierte Grenzen | Anwendungsfall → Prüfstand | AI Manager, Fachbereich, IT |
 | 7. 90-Tage-Plan und Projekt-Board | 90-Tage-Plan, Übersicht | alle (lesen) |
 | 8. KI-Führerschein: Kurs, Übungen, Abschlusstest, Zertifikat, Auswertung für Trainer | KI-Führerschein | alle |
-| 9. KI-Radar und Entscheidungsprotokoll (CSV-Export) | KI-Radar, Protokoll und Rechte | AI Manager pflegt |
+| 9. KI-Radar und Entscheidungsprotokoll (CSV-Export) | KI-Radar, Protokoll und Rechte | AI Manager und IT pflegen |
 
 Die Rolle wird in der Seitenleiste gewählt. Schritte, die eine Rolle nicht ausführen darf, sind gesperrt und zeigen, wer zuständig ist.
 
 ## Grundsätze
 
 - **Datenschutz durch Technikgestaltung:** E-Mail-Adressen, Telefonnummern, IBAN, Kfz-Kennzeichen, Geburtsdaten und Namen werden vor jedem Modellaufruf durch Platzhalter ersetzt ([`kie/privacy.py`](kie/privacy.py)). Eingaben bleiben in der Sitzung und werden nicht gespeichert.
-- **Menschen entscheiden:** Punkte und Ampel sind eine Gesprächsgrundlage. Eine Umsetzung ist erst nach Datenschutz-Freigabe und Entscheidung der Geschäftsführung möglich.
+- **Menschen entscheiden:** Punkte und Ampel sind eine Gesprächsgrundlage. Eine Umsetzung ist erst nach Freigabe durch Datenschutz und IT und nach der Entscheidung der Geschäftsführung möglich.
 - **Belegte Antworten:** Der Wissensassistent sucht per BM25 in freigegebenen Unterlagen ([`data/wissen`](data/wissen)), antwortet nur daraus und nennt die Quelle. Quellen, die das Modell erfindet, werden verworfen.
 - **Funktioniert auch ohne Sprachmodell:** Ohne API-Schlüssel läuft die App in einem regelbasierten Offline-Modus. Pro Besuch sind die KI-Aufrufe begrenzt.
 
@@ -53,7 +54,7 @@ pip install pytest ruff
 ruff check . && pytest
 ```
 
-Die 26 Tests prüfen Bewertung, Ampel, Zeitersparnis, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
+Die 28 Tests prüfen Bewertung, Ampel, Zeitersparnis, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
 
 ## Aufbau
 
