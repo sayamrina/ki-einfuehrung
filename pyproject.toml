@@ -1,0 +1,24 @@
+[project]
+name = "ki-einfuehrung"
+version = "1.0.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 140
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+# Inhalts- und Beispieldateien mit langen deutschen Texten
+"kie/seed.py" = ["E501"]
+"kie/seed_en.py" = ["E501"]
+"kie/i18n.py" = ["E501"]
+"kie/course.py" = ["E501"]
+"kie/views/*" = ["E501"]
+"streamlit_app.py" = ["E501"]
+"kie/ui.py" = ["E501"]
+"kie/scoring.py" = ["E501"]

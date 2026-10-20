@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KI-Einführung</title>
+<meta name="description" content="KI-Projekt 2026: eine Plattform, die den gesamten Arbeitszyklus eines AI Solutions Managers abbildet, von der Idee über Datenschutz, Bewertung und Entscheidung bis zu Tests, Schulung und Einführung.">
+<style>
+:root { --bg:#f5f8fb; --surface:#fff; --ink:#17212b; --muted:#566673; --line:#d9e2ea; --accent:#12355b; --link:#0b6e8a; --soft:#e8eef3;
+  --sans:"Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0f161d; --surface:#16212b; --ink:#e6edf3; --muted:#9fb1c0; --line:#283846; --accent:#9cc3ea; --link:#7fc6dc; --soft:#1c2c3a; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 var(--sans); }
+.wrap { max-width:940px; margin:0 auto; padding:0 20px; }
+header { padding:56px 0 36px; border-bottom:1px solid var(--line); }
+.top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.kicker { font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--link); }
+.lang { display:inline-flex; flex-shrink:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+.lang button { background:var(--surface); color:var(--ink); border:0; padding:6px 12px; font:600 13px var(--sans); cursor:pointer; }
+.lang button[aria-pressed="true"] { background:var(--accent); color:var(--bg); }
+h1 { font-size:clamp(32px,5.5vw,50px); line-height:1.08; margin:12px 0 16px; color:var(--accent); }
+.lead { font-size:19px; max-width:760px; margin:0; }
+.author { display:flex; align-items:center; gap:12px; margin-top:22px; }
+.author img { width:52px; height:52px; border-radius:50%; object-fit:cover; border:1px solid var(--line); }
+.byline { color:var(--muted); font-size:14px; }
+a { color:var(--link); }
+.btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:24px; }
+.btn { padding:10px 16px; border-radius:8px; font-weight:600; font-size:15px; text-decoration:none; border:1px solid var(--accent); color:var(--accent); }
+.btn.primary { background:var(--accent); color:var(--bg); }
+section { padding:42px 0; border-bottom:1px solid var(--line); }
+h2 { font-size:26px; margin:0 0 6px; color:var(--accent); }
+.sub { color:var(--muted); margin:0 0 22px; }
+.cycle { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; counter-reset:step; padding:0; margin:0; list-style:none; }
+.cycle li { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px; counter-increment:step; }
+.cycle li::before { content:counter(step); display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; background:var(--soft); color:var(--accent); font-weight:700; font-size:14px; margin-bottom:6px; }
+.cycle h3 { margin:0 0 4px; font-size:16.5px; }
+.cycle p { margin:0; font-size:14.5px; color:var(--muted); }
+table { width:100%; border-collapse:collapse; font-size:15px; background:var(--surface); border:1px solid var(--line); }
+th, td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--soft); font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+figure { margin:0 0 18px; }
+figure img { width:100%; height:auto; border:1px solid var(--line); border-radius:10px; display:block; }
+figcaption { font-size:14px; color:var(--muted); margin-top:6px; }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.note { color:var(--muted); font-size:14px; }
+footer { padding:28px 0 56px; color:var(--muted); font-size:14px; }
+[data-lang="en"] .de, [data-lang="de"] .en { display:none; }
+@media (max-width:760px) { .cycle, .two { grid-template-columns:1fr; } header { padding-top:40px; } .lead { font-size:17px; } }
+</style>
+</head>
+<body data-lang="de">
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="kicker"><span class="de">KI-Projekt 2026</span><span class="en">AI project 2026</span> · Python · Streamlit · LLM · DSGVO</div>
+      <div class="lang" role="group" aria-label="Sprache / Language">
+        <button type="button" data-set="de" aria-pressed="true">DE</button><button type="button" data-set="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+    <h1>KI-Einführung</h1>
+    <p class="lead de">Eine Plattform, die den gesamten Arbeitszyklus eines AI Solutions Managers abbildet: Ideen aus dem Fachbereich aufnehmen, Prozesse und Datenschutz prüfen, Anwendungsfälle bewerten, Entscheidungen vorbereiten, Ergebnisse testen, Mitarbeitende schulen und neue Werkzeuge beobachten. Jeder Schritt ist sichtbar und nachvollziehbar.</p>
+    <p class="lead en">A platform that mirrors the whole work cycle of an AI Solutions Manager: collecting ideas from business units, checking processes and data protection, assessing use cases, preparing decisions, testing results, training employees and watching new tools. Every step is visible and traceable.</p>
+    <div class="author">
+      <img src="img/amrina.jpg" alt="Foto von Amrina" width="52" height="52">
+      <div><strong>Amrina</strong><div class="byline">M.Sc. Educational Technology, <span class="de">Universität des Saarlandes</span><span class="en">Saarland University</span> · <a href="https://sayamrina.github.io/">Portfolio</a></div></div>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="https://ki-einfuehrung.streamlit.app/"><span class="de">App ausprobieren</span><span class="en">Try the live app</span></a>
+      <a class="btn" href="https://github.com/sayamrina/ki-einfuehrung"><span class="de">Code auf GitHub</span><span class="en">Code on GitHub</span></a>
+      <a class="btn" href="https://sayamrina.github.io/"><span class="de">Mein Portfolio</span><span class="en">My portfolio</span></a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2><span class="de">Der Arbeitszyklus in neun Schritten</span><span class="en">The work cycle in nine steps</span></h2>
+    <p class="sub"><span class="de">Vier Rollen arbeiten zusammen: Fachbereich, AI Manager, Datenschutz und Geschäftsführung. Jede Rolle darf nur ihre eigenen Schritte ausführen.</span><span class="en">Four roles work together: business unit, AI manager, data protection and management. Each role may only carry out its own steps.</span></p>
+    <ol class="cycle">
+      <li><h3><span class="de">Idee einreichen</span><span class="en">Submit an idea</span></h3><p><span class="de">Der Fachbereich beschreibt ein Problem in eigenen Worten; die KI macht daraus einen Steckbrief. Personenbezogene Daten werden vorher ersetzt.</span><span class="en">The business unit describes a problem in its own words; the AI turns it into a brief. Personal data is replaced first.</span></p></li>
+      <li><h3><span class="de">Prozessaufnahme</span><span class="en">Process mapping</span></h3><p><span class="de">Arbeitsschritte und Minuten heute und mit KI ergeben die geschätzte Zeitersparnis pro Monat.</span><span class="en">Work steps and minutes today and with AI give the estimated time saved per month.</span></p></li>
+      <li><h3><span class="de">Datenschutz-Check</span><span class="en">Data protection check</span></h3><p><span class="de">Risiken und Schutzmaßnahmen ergeben eine Ampel. Nur die Rolle Datenschutz gibt frei.</span><span class="en">Risks and safeguards give a traffic light. Only the data protection role can approve.</span></p></li>
+      <li><h3><span class="de">Bewertung</span><span class="en">Assessment</span></h3><p><span class="de">Nutzen, Aufwand, Umsetzbarkeit und Risiko ergeben Punkte und einen Rang als Gesprächsgrundlage.</span><span class="en">Benefit, effort, feasibility and risk give points and a rank as a basis for discussion.</span></p></li>
+      <li><h3><span class="de">Entscheidung</span><span class="en">Decision</span></h3><p><span class="de">Die Geschäftsführung entscheidet mit Begründung. Ohne Datenschutz-Freigabe ist keine Umsetzung möglich. Entscheidungsvorlage als PDF.</span><span class="en">Management decides with a reason. No implementation without data protection approval. Decision paper as PDF.</span></p></li>
+      <li><h3><span class="de">Prüfstand</span><span class="en">Test bench</span></h3><p><span class="de">Ein Wissensassistent beantwortet Fragen nur aus freigegebenen Unterlagen, mit Quelle. Testfälle ergeben eine Trefferquote.</span><span class="en">A knowledge assistant answers only from approved documents, with the source. Test cases give a hit rate.</span></p></li>
+      <li><h3><span class="de">90-Tage-Plan und Board</span><span class="en">90-day plan and board</span></h3><p><span class="de">Analyse, Prototyp, Pilot und Einführung: jeder sieht, wo ein Vorhaben steht.</span><span class="en">Analysis, prototype, pilot and rollout: everyone sees where a project stands.</span></p></li>
+      <li><h3><span class="de">KI-Führerschein</span><span class="en">AI licence</span></h3><p><span class="de">Kurs in vier Modulen, Übungen aus dem Alltag, Abschlusstest, Zertifikat als PDF und Auswertung für Trainer.</span><span class="en">Four-module course, everyday exercises, final test, PDF certificate and results for trainers.</span></p></li>
+      <li><h3><span class="de">KI-Radar und Protokoll</span><span class="en">AI radar and log</span></h3><p><span class="de">Neue Werkzeuge nüchtern bewertet; jede Freigabe und Entscheidung im Protokoll, als CSV exportierbar.</span><span class="en">New tools assessed soberly; every approval and decision in the log, exportable as CSV.</span></p></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="de">In der Anwendung</span><span class="en">In the app</span></h2>
+    <p class="sub"><span class="de">Die Oberfläche ist auf Deutsch und Englisch verfügbar.</span><span class="en">The interface is available in German and English.</span></p>
+    <figure class="de"><img src="img/dashboard.png" alt="Übersicht mit Kennzahlen und Projekt-Board" width="1366" height="860" loading="lazy"><figcaption>Übersicht: Kennzahlen, Projekt-Board mit Status, Rang und Datenschutz-Ampel.</figcaption></figure>
+    <figure class="en"><img src="img/dashboard_en.png" alt="Dashboard with key figures and project board" width="1366" height="860" loading="lazy"><figcaption>Dashboard: key figures and project board with status, rank and data protection light.</figcaption></figure>
+    <div class="two">
+      <figure><img src="img/datenschutz.png" alt="Datenschutz-Check mit Ampel" width="1366" height="860" loading="lazy"><figcaption><span class="de">Datenschutz-Check: Fragen und Schutzmaßnahmen ergeben die Ampel.</span><span class="en">Data protection check: questions and safeguards give the traffic light.</span></figcaption></figure>
+      <figure><img src="img/pruefstand.png" alt="Prüfstand mit Wissensassistent und Quelle" width="1366" height="860" loading="lazy"><figcaption><span class="de">Prüfstand: Antwort mit Quelle, als Testfall bewertbar.</span><span class="en">Test bench: answer with its source, rated as a test case.</span></figcaption></figure>
+      <figure><img src="img/priorities.png" alt="Prioritäten: Nutzen und Aufwand" width="1366" height="860" loading="lazy"><figcaption><span class="de">Prioritäten: Nutzen gegen Aufwand und Rangliste.</span><span class="en">Priorities: benefit against effort, and the ranking.</span></figcaption></figure>
+      <figure><img src="img/lernen.png" alt="Auswertung des KI-Führerscheins" width="1366" height="860" loading="lazy"><figcaption><span class="de">KI-Führerschein: Auswertung, welche Fragen dem Team schwerfallen.</span><span class="en">AI licence: which questions the team finds hard.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="de">Verantwortungsvoller KI-Einsatz</span><span class="en">Responsible use of AI</span></h2>
+    <table>
+      <thead><tr><th><span class="de">Thema</span><span class="en">Topic</span></th><th><span class="de">Umsetzung</span><span class="en">How it is done</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="de">Personenbezogene Daten</span><span class="en">Personal data</span></td><td><span class="de">E-Mail, Telefon, IBAN, Kfz-Kennzeichen, Geburtsdatum und Namen werden vor jedem Modellaufruf ersetzt. Eingaben bleiben in der Sitzung.</span><span class="en">E-mail, phone, IBAN, licence plates, birth dates and names are replaced before every model call. Inputs stay in the session.</span></td></tr>
+        <tr><td><span class="de">Menschliche Kontrolle</span><span class="en">Human control</span></td><td><span class="de">Punkte sind eine Gesprächsgrundlage, keine automatische Entscheidung. Freigaben erfolgen durch Personen in ihrer Rolle.</span><span class="en">Points are a basis for discussion, not an automatic decision. Approvals are given by people in their role.</span></td></tr>
+        <tr><td><span class="de">Belegte Antworten</span><span class="en">Grounded answers</span></td><td><span class="de">Der Wissensassistent antwortet nur aus gefundenen Abschnitten und nennt sie; ohne passende Unterlage sagt er das offen.</span><span class="en">The knowledge assistant answers only from retrieved sections and names them; without a matching document it says so.</span></td></tr>
+        <tr><td><span class="de">Nachvollziehbarkeit</span><span class="en">Traceability</span></td><td><span class="de">Rollen und Rechte, Protokoll jeder Änderung, Entscheidungsvorlage als PDF, Export als CSV.</span><span class="en">Roles and permissions, a log of every change, decision paper as PDF, CSV export.</span></td></tr>
+        <tr><td><span class="de">Technik</span><span class="en">Technology</span></td><td>Python, Streamlit, OpenAI gpt-4o-mini <span class="de">mit regelbasiertem Offline-Modus</span><span class="en">with a rule-based offline mode</span>, BM25, fpdf2, Altair, <span class="de">26 automatisierte Tests</span><span class="en">26 automated tests</span></td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:14px"><span class="de">Alle Inhalte sind Beispieldaten aus der Logistikbranche.</span><span class="en">All content is sample data from the logistics sector.</span></p>
+  </div>
+</section>
+
+<footer><div class="wrap"><span class="de">KI-Projekt 2026</span><span class="en">AI project 2026</span> · This app was built by Amrina, with AI as a supporting tool for coding. · <a href="https://sayamrina.github.io/">Portfolio</a></div></footer>
+<script>
+(function () {
+  var buttons = document.querySelectorAll(".lang button");
+  function set(lang) {
+    document.body.dataset.lang = lang;
+    document.documentElement.lang = lang;
+    buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.set === lang)); });
+    try { localStorage.setItem("kie-lang", lang); } catch (e) {}
+  }
+  buttons.forEach(function (b) { b.addEventListener("click", function () { set(b.dataset.set); }); });
+  try { var saved = localStorage.getItem("kie-lang"); if (saved === "en") set("en"); } catch (e) {}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+streamlit==1.66.0
+openai==1.109.1
+fpdf2==2.8.9
+pandas==3.0.6
+altair==6.3.0
