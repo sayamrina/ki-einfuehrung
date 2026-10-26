@@ -14,7 +14,7 @@ def page(name: str, role: str = "AI Manager", lang: str = "de") -> AppTest:
     return at.run()
 
 
-@pytest.mark.parametrize("name", ["uebersicht", "plan", "idee", "usecase", "sop", "lernen", "radar", "protokoll", "about"])
+@pytest.mark.parametrize("name", ["uebersicht", "plan", "wert", "idee", "usecase", "sop", "lernen", "radar", "protokoll", "about"])
 @pytest.mark.parametrize("lang", ["de", "en"])
 def test_page_renders(name, lang, monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
@@ -99,3 +99,19 @@ def test_sop_assistant_refuses_release_and_logs_it(monkeypatch):
     assert at.session_state["sop_log"][-1]["ergebnis"].startswith("🛑")
     [b for b in at.button if b.label == "Run all test cases"][0].click().run()
     assert any(m.value == "11 / 11" for m in at.metric)
+
+
+def test_value_measurement_feeds_the_qbr(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    at = page("usecase", "Fachbereich", lang="en")
+    at.number_input(key="w_rate_A")  # the Value tab renders for use case A
+    form_inputs = [n for n in at.number_input if n.label == "Actual (h)"]
+    form_inputs[0].set_value(30.0)
+    [n for n in at.number_input if n.label == "Target (h)"][0].set_value(40.0)
+    [t for t in at.text_input if t.label == "Month (YYYY-MM)"][0].set_value("2026-11")
+    [b for b in at.button if b.label == "Save measurement"][0].click().run()
+    assert not at.exception
+    assert at.session_state["usecases"][0]["wert"]["messungen"][-1] == {"monat": "2026-11", "ziel": 40.0, "ist": 30.0, "nutzende": 0}
+    at = page("wert", lang="en")
+    assert not at.exception
+    assert any(m.label == "Value in the quarter" for m in at.metric)

@@ -23,6 +23,7 @@ RIGHTS = {
     "testen": {"AI Manager", "Fachbereich", "IT"},
     "status_aendern": {"AI Manager"},
     "radar_bearbeiten": {"AI Manager", "IT"},
+    "wert_pflegen": {"AI Manager", "Fachbereich"},
 }
 RIGHT_LABELS = {
     "idee_einreichen": ("Idee einreichen", "Submit an idea"),
@@ -37,6 +38,7 @@ RIGHT_LABELS = {
     "testen": ("Prüfstand: Tests ausführen", "Test bench: run tests"),
     "status_aendern": ("Projektstatus ändern", "Change project status"),
     "radar_bearbeiten": ("KI-Radar pflegen", "Maintain the AI radar"),
+    "wert_pflegen": ("Wertbeitrag messen", "Measure value"),
 }
 MAX_LLM_CALLS = 20
 
@@ -66,6 +68,20 @@ AIACT_SEED = {
 }
 
 
+# Wertbeitrag der Beispieldaten: Annahmen und gemessene Ziel- und Ist-Stunden je Monat
+WERT_SEED = {
+    "A": {"annahmen": {"stundensatz": 45.0, "entwicklung_satz": 80.0, "betrieb_monat": 150.0},
+          "messungen": [{"monat": "2026-10", "ziel": 40, "ist": 34, "nutzende": 8}]},
+    "C": {"annahmen": {"stundensatz": 45.0, "entwicklung_satz": 80.0, "betrieb_monat": 90.0}, "messungen": []},
+    "D": {"annahmen": {"stundensatz": 55.0, "entwicklung_satz": 80.0, "betrieb_monat": 20.0},
+          "messungen": [{"monat": "2026-10", "ziel": 10, "ist": 12, "nutzende": 3}]},
+}
+
+
+def wert_seed(uid: str) -> dict:
+    return copy.deepcopy(WERT_SEED.get(uid, {"annahmen": {}, "messungen": []}))
+
+
 def aiact_seed(uid: str, lang: str) -> dict:
     answers, release, de, en = AIACT_SEED.get(uid, ({}, "offen", "", ""))
     return {"antworten": dict(answers), "gxp": {}, "freigabe": release, "kommentar": en if lang == "en" else de}
@@ -88,6 +104,7 @@ def load_sample_data(lang: str) -> None:
     for u in s.usecases:
         u.setdefault("it", it_seed(u["id"], lang))
         u.setdefault("aiact", aiact_seed(u["id"], lang))
+        u.setdefault("wert", wert_seed(u["id"]))
     s.course_stats = copy.deepcopy(seed.course_stats())
     s.quiz_result = None
     s.data_lang = lang

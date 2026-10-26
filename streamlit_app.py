@@ -18,7 +18,7 @@ if key:
 
 from kie import llm, state, ui  # noqa: E402
 from kie.i18n import LANGS, T, role  # noqa: E402
-from kie.views import about, idee, lernen, plan, protokoll, radar, sop, uebersicht, usecase  # noqa: E402
+from kie.views import about, idee, lernen, plan, protokoll, radar, sop, uebersicht, usecase, wert  # noqa: E402
 
 st.session_state.setdefault("lang", "de")
 with st.sidebar:
@@ -43,7 +43,8 @@ with st.sidebar:
 pages = st.navigation({
     T("Steuerung", "Overview"): [
         st.Page(uebersicht.render, title=T("Übersicht", "Dashboard"), icon="📊", url_path="uebersicht", default=True),
-        st.Page(plan.render, title=T("90-Tage-Plan", "90-day plan"), icon="🗓️", url_path="plan")],
+        st.Page(plan.render, title=T("90-Tage-Plan", "90-day plan"), icon="🗓️", url_path="plan"),
+        st.Page(wert.render, title=T("Wertbeitrag (QBR)", "Value tracking (QBR)"), icon="💶", url_path="wertbeitrag")],
     T("Anwendungsfälle", "Use cases"): [
         st.Page(idee.render, title=T("Idee einreichen", "Submit an idea"), icon="💡", url_path="idee"),
         st.Page(usecase.render, title=T("Anwendungsfall bearbeiten", "Work on a use case"), icon="🧩", url_path="anwendungsfall"),

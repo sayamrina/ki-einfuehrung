@@ -25,6 +25,7 @@ Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Proj
 | 3c. IT-Check: Schnittstellen, Hosting, Firmenanmeldung, Betrieb und Kosten; Aufwand in Personentagen; technische Freigabe | Anwendungsfall → IT-Check | IT |
 | 4. Bewertung: Nutzen + Umsetzbarkeit − Aufwand − Risiko ergibt Punkte und Rang | Anwendungsfall → Bewertung, Übersicht | AI Manager |
 | 5. Entscheidung mit Begründung, erst nach Freigabe durch Datenschutz, Compliance und IT; Entscheidungsvorlage als PDF | Anwendungsfall → Entscheidung | Geschäftsführung |
+| 5b. Wertbeitrag: Value Case in Euro (gesparte Stunden × Stundensatz − laufende Kosten, Aufbaukosten aus den IT-Personentagen, Amortisation, ROI im ersten Jahr), Ziel und Ist je Monat mit Realisierungs-Ampel, Quartalsbericht (QBR) mit Kernaussagen als Markdown und CSV | Anwendungsfall → Wert, Wertbeitrag (QBR) | AI Manager und Fachbereich messen |
 | 6. Prüfstand: Wissensassistent mit Quellenangabe, Testfälle und Trefferquote, dokumentierte Grenzen | Anwendungsfall → Prüfstand | AI Manager, Fachbereich, IT |
 | 7. 90-Tage-Plan und Projekt-Board | 90-Tage-Plan, Übersicht | alle (lesen) |
 | 8. KI-Führerschein: Kurs, Übungen, Abschlusstest, Zertifikat, Auswertung für Trainer | KI-Führerschein | alle |
@@ -56,7 +57,7 @@ pip install pytest ruff
 ruff check . && pytest
 ```
 
-Die 38 Tests prüfen Bewertung, Ampel, Zeitersparnis, AI-Act-Einstufung, die GxP-Leitplanken des SOP-Assistenten, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
+Die 43 Tests prüfen Bewertung, Ampel, Zeitersparnis, Value Case und QBR, AI-Act-Einstufung, die GxP-Leitplanken des SOP-Assistenten, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
 
 ## Aufbau
 

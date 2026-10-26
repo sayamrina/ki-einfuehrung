@@ -112,3 +112,32 @@ def test_sop_never_uses_superseded_versions_and_drops_invented_sources():
     assert result.superseded == ["SOP-PR-031 v2.1"]
     invented = answer(a, "What AQL applies to critical defects?", "en", model=lambda q, hits: ("AQL 0.1", [999]))
     assert invented.kind == "keine_quelle"
+
+
+def test_value_case_payback_and_roi():
+    from kie import state
+    from kie.value import value_case
+
+    uc = next(u for u in seed.usecases() if u["id"] == "A")
+    uc["it"], uc["wert"] = state.it_seed("A", "de"), state.wert_seed("A")
+    vc = value_case(uc)
+    # 120 h × 45 € − 150 € = 5.250 € pro Monat; Aufbau 12 PT × 8 h × 80 € = 7.680 €
+    assert (vc.hours_per_month, vc.net_per_month, vc.build_cost) == (120.0, 5250.0, 7680.0)
+    assert vc.payback_months == 1.5 and vc.roi_first_year == 7.2
+    uc["it"] = {}
+    assert value_case(uc).payback_months is None  # ohne Aufbaukosten keine Amortisation
+
+
+def test_qbr_realisation_lights_and_summary():
+    from kie import state
+    from kie.value import qbr, quarter, realisation, summary
+
+    assert quarter("2026-10") == "2026-Q4" and quarter("2026-03") == "2026-Q1"
+    assert realisation(40, 34) == (0.85, "gelb") and realisation(10, 12)[1] == "gruen" and realisation(10, 5)[1] == "rot"
+    assert realisation(0, 3) == (None, "offen")
+    ucs = seed.usecases()
+    for u in ucs:
+        u["wert"] = state.wert_seed(u["id"])
+    rows = qbr(ucs, "2026-Q4")
+    assert [r["id"] for r in rows] == ["A", "D"] and rows[0]["wert_eur"] == 1530.0
+    assert summary(rows, "de")[0].endswith("Wert 2.190 €.")

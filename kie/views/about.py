@@ -9,7 +9,7 @@ ABOUT_DE = """
 1. **Idee einreichen:** Der Fachbereich beschreibt ein Problem in eigenen Worten; die KI strukturiert es zu einem Steckbrief. Personenbezogene Daten werden vorher entfernt.
 2. **Prozessaufnahme:** Arbeitsschritte und Zeiten heute und mit KI; daraus ergibt sich die geschätzte Zeitersparnis.
 3. **Datenschutz-, AI-Act- und IT-Check:** Risiken und Schutzmaßnahmen ergeben eine Datenschutz-Ampel. Die Einstufung nach dem EU AI Act (verboten, Hochrisiko, Transparenz, minimal) zeigt die Pflichten, ein GxP-Check ergänzt regulierte Prozesse; Compliance bestätigt. Die IT prüft Schnittstellen, Hosting, Anmeldung, Betrieb und Kosten.
-4. **Bewertung:** Nutzen, Aufwand, Umsetzbarkeit und Risiko ergeben Punkte und einen Rang als Gesprächsgrundlage.
+4. **Bewertung und Wertbeitrag:** Nutzen, Aufwand, Umsetzbarkeit und Risiko ergeben Punkte und einen Rang als Gesprächsgrundlage. Der Value Case rechnet die Zeitersparnis in Euro um (Amortisation, ROI); im Betrieb werden Ziel und Ist je Monat gemessen und im Quartalsbericht (QBR) zusammengefasst.
 5. **Entscheidung:** Die Geschäftsführung entscheidet mit Begründung, erst nach Freigabe durch Datenschutz, Compliance und IT; die Entscheidungsvorlage gibt es als PDF.
 6. **Prüfstand:** Ergebnisse werden mit echten Testfragen geprüft, Grenzen werden dokumentiert.
 7. **90-Tage-Plan und Projekt-Board:** Jeder sieht, wo ein Vorhaben steht.
@@ -31,7 +31,7 @@ ABOUT_EN = """
 1. **Submit an idea:** The business unit describes a problem in its own words; the AI turns it into a brief. Personal data is removed first.
 2. **Process mapping:** Work steps and times today and with AI; this gives the estimated time saving.
 3. **Data protection, AI Act and IT check:** Risks and safeguards give a data protection light. The EU AI Act classification (prohibited, high risk, transparency, minimal) shows the obligations, and a GxP check covers regulated processes; Compliance confirms. IT checks interfaces, hosting, sign-in, operations and costs.
-4. **Assessment:** Benefit, effort, feasibility and risk give points and a rank as a basis for discussion.
+4. **Assessment and value:** Benefit, effort, feasibility and risk give points and a rank as a basis for discussion. The value case turns time saved into euros (payback, ROI); in operation, target and actual are measured per month and summarised in the quarterly business review (QBR).
 5. **Decision:** Management decides with a reason, only after data protection, Compliance and IT have approved; the decision paper is available as a PDF.
 6. **Test bench:** Results are checked with real test questions, and limits are documented.
 7. **90-day plan and project board:** Everyone can see where a project stands.

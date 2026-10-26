@@ -1,10 +1,11 @@
+import re
 from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
-from .. import aiact, llm, pdf, state, ui
+from .. import aiact, llm, pdf, state, ui, value
 from ..i18n import T, decision, lang, release, role, status, verdict
 from ..knowledge import Index, load_sections
 from ..privacy import pseudonymise
@@ -38,7 +39,7 @@ def render() -> None:
                 + ui.badge(text, kind) + ui.badge(it_text, it_kind) + ui.badge(ai_text, ai_kind), unsafe_allow_html=True)
 
     tabs = st.tabs([T("Steckbrief", "Brief"), T("Prozessaufnahme", "Process mapping"), T("Datenschutz-Check", "Data protection check"),
-                    T("EU AI Act", "EU AI Act"), T("IT-Check", "IT check"), T("Bewertung", "Assessment"), T("Entscheidung", "Decision"), T("Prüfstand", "Test bench"), T("Verlauf", "History")])
+                    T("EU AI Act", "EU AI Act"), T("IT-Check", "IT check"), T("Bewertung", "Assessment"), T("Wert", "Value"), T("Entscheidung", "Decision"), T("Prüfstand", "Test bench"), T("Verlauf", "History")])
     with tabs[0]:
         steckbrief(uc)
     with tabs[1]:
@@ -52,10 +53,12 @@ def render() -> None:
     with tabs[5]:
         bewertung(uc, rank)
     with tabs[6]:
-        entscheidung(uc, rank)
+        wert(uc)
     with tabs[7]:
-        pruefstand(uc)
+        entscheidung(uc, rank)
     with tabs[8]:
+        pruefstand(uc)
+    with tabs[9]:
         verlauf(uc)
 
 
@@ -287,6 +290,79 @@ def bewertung(uc: dict, rank: int) -> None:
         st.rerun()
     if not editable:
         state.deny_hint("bewerten")
+
+
+def euro(amount: float) -> str:
+    text = f"{amount:,.0f} €"
+    return text.replace(",", ".") if lang() == "de" else "€" + text[:-2]
+
+
+def wert(uc: dict) -> None:
+    w = uc["wert"]
+    editable = state.can("wert_pflegen")
+    st.markdown(T("Value Case aus der Prozessaufnahme und gemessener Nutzen im Betrieb: Ziel und Ist je Monat, damit der Nutzen "
+                  "nicht nur versprochen, sondern nachgewiesen wird.",
+                  "Value case from the process mapping and measured benefit in operation: target and actual per month, so the "
+                  "benefit is shown, not just promised."))
+    a = value.settings(uc)
+    c = st.columns(3)
+    rate = c[0].number_input(T("Stundensatz Fachbereich (€/h, voll)", "Business unit hourly cost (€/h, fully loaded)"), 0.0, 300.0,
+                             float(a["stundensatz"]), 5.0, disabled=not editable, key=f"w_rate_{uc['id']}")
+    dev = c[1].number_input(T("Entwicklungssatz (€/h)", "Development rate (€/h)"), 0.0, 300.0, float(a["entwicklung_satz"]), 5.0,
+                            disabled=not editable, key=f"w_dev_{uc['id']}")
+    run = c[2].number_input(T("Laufende Kosten (€/Monat)", "Running costs (€/month)"), 0.0, 100000.0, float(a["betrieb_monat"]), 10.0,
+                            disabled=not editable, key=f"w_run_{uc['id']}",
+                            help=T("Modellnutzung, Hosting, Lizenzen", "Model usage, hosting, licences"))
+    preview = dict(uc, wert={"annahmen": {"stundensatz": rate, "entwicklung_satz": dev, "betrieb_monat": run}})
+    vc = value.value_case(preview)
+    m = st.columns(4)
+    m[0].metric(T("Gesparte Stunden pro Monat", "Hours saved per month"), f"{vc.hours_per_month:g} h")
+    m[1].metric(T("Netto-Nutzen pro Monat", "Net benefit per month"), euro(vc.net_per_month),
+                help=T(f"Nutzen {euro(vc.benefit_per_month)} − laufende Kosten {euro(vc.run_cost_per_month)}",
+                       f"Benefit {euro(vc.benefit_per_month)} − running costs {euro(vc.run_cost_per_month)}"))
+    payback = f"{vc.payback_months:g}".replace(".", ",") if lang() == "de" else f"{vc.payback_months:g}"
+    m[2].metric(T("Amortisation", "Payback"), f"{payback} {T('Monate', 'months')}" if vc.payback_months else "–",
+                help=T(f"Aufbaukosten {euro(vc.build_cost)} aus den Personentagen im IT-Check",
+                       f"Build cost {euro(vc.build_cost)} from the person-days in the IT check"))
+    m[3].metric(T("ROI im ersten Jahr", "First-year ROI"), f"{vc.roi_first_year:.0%}" if vc.roi_first_year is not None else "–")
+    if editable and st.button(T("Annahmen speichern", "Save assumptions"), key=f"w_save_{uc['id']}"):
+        w["annahmen"] = {"stundensatz": rate, "entwicklung_satz": dev, "betrieb_monat": run}
+        state.log(uc["id"], T("Value Case aktualisiert", "Value case updated"), f"{euro(vc.net_per_month)}/{T('Monat', 'month')}")
+        st.success(T("Gespeichert.", "Saved."))
+    st.caption(T("Annahmen sind Schätzungen und werden mit dem Fachbereich abgestimmt. Die Zahlen sind eine Entscheidungshilfe, "
+                 "kein Versprechen.", "Assumptions are estimates agreed with the business unit. The figures support a decision; "
+                 "they are not a promise."))
+
+    st.markdown(f"**{T('Gemessener Nutzen', 'Measured benefit')}**")
+    rows = []
+    for e in sorted(w.get("messungen", []), key=lambda e: e["monat"]):
+        share, level = value.realisation(e["ziel"], e["ist"])
+        rows.append({T("Monat", "Month"): e["monat"], T("Ziel (h)", "Target (h)"): e["ziel"], T("Ist (h)", "Actual (h)"): e["ist"],
+                     T("Nutzende", "Users"): e.get("nutzende", 0),
+                     T("Realisierung", "Realisation"): f"{AMPEL_DOT[level]} {share:.0%}" if share is not None else "–"})
+    if rows:
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+    else:
+        st.info(T("Noch keine Messung. Gemessen wird ab Pilot.", "No measurement yet. Measuring starts with the pilot."))
+    if editable:
+        with st.form(f"w_add_{uc['id']}"):
+            f = st.columns(4)
+            month = f[0].text_input(T("Monat (JJJJ-MM)", "Month (YYYY-MM)"), date.today().strftime("%Y-%m"))
+            target = f[1].number_input(T("Ziel (h)", "Target (h)"), 0.0, 10000.0, 0.0, 1.0)
+            actual = f[2].number_input(T("Ist (h)", "Actual (h)"), 0.0, 10000.0, 0.0, 1.0)
+            users = f[3].number_input(T("Nutzende", "Users"), 0, 10000, 0)
+            if st.form_submit_button(T("Messung speichern", "Save measurement")):
+                if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", month.strip()):
+                    st.error(T("Monat bitte als JJJJ-MM eingeben, z. B. 2026-11.", "Please enter the month as YYYY-MM, e.g. 2026-11."))
+                else:
+                    w.setdefault("messungen", []).append({"monat": month.strip(), "ziel": target, "ist": actual, "nutzende": int(users)})
+                    state.log(uc["id"], T("Nutzen gemessen", "Benefit measured"), f"{month.strip()}: {actual:g} / {target:g} h")
+                    st.rerun()
+    else:
+        state.deny_hint("wert_pflegen")
+
+
+AMPEL_DOT = {"gruen": "🟢", "gelb": "🟡", "rot": "🔴", "offen": "⚪"}
 
 
 def entscheidung(uc: dict, rank: int) -> None:
