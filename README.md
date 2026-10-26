@@ -57,7 +57,7 @@ pip install pytest ruff
 ruff check . && pytest
 ```
 
-Die 43 Tests prüfen Bewertung, Ampel, Zeitersparnis, Value Case und QBR, AI-Act-Einstufung, die GxP-Leitplanken des SOP-Assistenten, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
+Die 50 Tests prüfen Bewertung, Ampel, Zeitersparnis, Value Case und QBR, AI-Act-Einstufung, die GxP-Leitplanken des SOP-Assistenten, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
 
 ## Aufbau
 

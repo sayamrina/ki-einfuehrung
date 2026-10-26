@@ -115,3 +115,11 @@ def test_value_measurement_feeds_the_qbr(monkeypatch):
     at = page("wert", lang="en")
     assert not at.exception
     assert any(m.label == "Value in the quarter" for m in at.metric)
+
+
+@pytest.mark.parametrize("uid", ["A", "B", "C", "D", "E", "F", "G"])
+def test_every_sample_use_case_renders_all_tabs(uid, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    at = page("usecase")
+    at.selectbox(key="uc_select").set_value(uid).run()
+    assert not at.exception

@@ -320,8 +320,11 @@ def wert(uc: dict) -> None:
     m[1].metric(T("Netto-Nutzen pro Monat", "Net benefit per month"), euro(vc.net_per_month),
                 help=T(f"Nutzen {euro(vc.benefit_per_month)} − laufende Kosten {euro(vc.run_cost_per_month)}",
                        f"Benefit {euro(vc.benefit_per_month)} − running costs {euro(vc.run_cost_per_month)}"))
-    payback = f"{vc.payback_months:g}".replace(".", ",") if lang() == "de" else f"{vc.payback_months:g}"
-    m[2].metric(T("Amortisation", "Payback"), f"{payback} {T('Monate', 'months')}" if vc.payback_months else "–",
+    payback = "–"
+    if vc.payback_months is not None:  # ohne Aufbaukosten oder ohne Netto-Nutzen keine Amortisation
+        months = f"{vc.payback_months:g}"
+        payback = f"{months.replace('.', ',') if lang() == 'de' else months} {T('Monate', 'months')}"
+    m[2].metric(T("Amortisation", "Payback"), payback,
                 help=T(f"Aufbaukosten {euro(vc.build_cost)} aus den Personentagen im IT-Check",
                        f"Build cost {euro(vc.build_cost)} from the person-days in the IT check"))
     m[3].metric(T("ROI im ersten Jahr", "First-year ROI"), f"{vc.roi_first_year:.0%}" if vc.roi_first_year is not None else "–")
