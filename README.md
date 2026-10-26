@@ -21,9 +21,10 @@ Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Proj
 | 1. Idee einreichen: Problem in eigenen Worten, die KI erstellt einen Steckbrief (personenbezogene Daten werden vorher ersetzt) | Idee einreichen | Fachbereich, AI Manager |
 | 2. Prozessaufnahme: Minuten pro Schritt heute und mit KI, daraus Zeitersparnis pro Monat | Anwendungsfall → Prozessaufnahme | Fachbereich, AI Manager |
 | 3a. Datenschutz-Check: Risiken und Schutzmaßnahmen ergeben eine Ampel; Freigabe mit Auflagen | Anwendungsfall → Datenschutz-Check | Datenschutz |
-| 3b. IT-Check: Schnittstellen, Hosting, Firmenanmeldung, Betrieb und Kosten; Aufwand in Personentagen; technische Freigabe | Anwendungsfall → IT-Check | IT |
+| 3b. EU-AI-Act-Einstufung: verbotene Praktiken (Art. 5), Hochrisiko (Anhang I und III, Ausnahme nach Art. 6 (3)), Transparenz (Art. 50), sonst minimal; Pflichten je Stufe und GxP-Check (Anhang 11, ALCOA+); Bestätigung durch Compliance | Anwendungsfall → EU AI Act | AI Manager bereitet vor, Compliance bestätigt |
+| 3c. IT-Check: Schnittstellen, Hosting, Firmenanmeldung, Betrieb und Kosten; Aufwand in Personentagen; technische Freigabe | Anwendungsfall → IT-Check | IT |
 | 4. Bewertung: Nutzen + Umsetzbarkeit − Aufwand − Risiko ergibt Punkte und Rang | Anwendungsfall → Bewertung, Übersicht | AI Manager |
-| 5. Entscheidung mit Begründung, erst nach Freigabe durch Datenschutz und IT; Entscheidungsvorlage als PDF | Anwendungsfall → Entscheidung | Geschäftsführung |
+| 5. Entscheidung mit Begründung, erst nach Freigabe durch Datenschutz, Compliance und IT; Entscheidungsvorlage als PDF | Anwendungsfall → Entscheidung | Geschäftsführung |
 | 6. Prüfstand: Wissensassistent mit Quellenangabe, Testfälle und Trefferquote, dokumentierte Grenzen | Anwendungsfall → Prüfstand | AI Manager, Fachbereich, IT |
 | 7. 90-Tage-Plan und Projekt-Board | 90-Tage-Plan, Übersicht | alle (lesen) |
 | 8. KI-Führerschein: Kurs, Übungen, Abschlusstest, Zertifikat, Auswertung für Trainer | KI-Führerschein | alle |
@@ -34,7 +35,7 @@ Die Rolle wird in der Seitenleiste gewählt. Schritte, die eine Rolle nicht ausf
 ## Grundsätze
 
 - **Datenschutz durch Technikgestaltung:** E-Mail-Adressen, Telefonnummern, IBAN, Kfz-Kennzeichen, Geburtsdaten und Namen werden vor jedem Modellaufruf durch Platzhalter ersetzt ([`kie/privacy.py`](kie/privacy.py)). Eingaben bleiben in der Sitzung und werden nicht gespeichert.
-- **Menschen entscheiden:** Punkte und Ampel sind eine Gesprächsgrundlage. Eine Umsetzung ist erst nach Freigabe durch Datenschutz und IT und nach der Entscheidung der Geschäftsführung möglich.
+- **Menschen entscheiden:** Punkte und Ampel sind eine Gesprächsgrundlage. Eine Umsetzung ist erst nach Freigabe durch Datenschutz, Compliance und IT und nach der Entscheidung der Geschäftsführung möglich. Die AI-Act-Einstufung ist eine Orientierung für das Gespräch mit Compliance und Recht, keine Rechtsberatung.
 - **Belegte Antworten:** Der Wissensassistent sucht per BM25 in freigegebenen Unterlagen ([`data/wissen`](data/wissen)), antwortet nur daraus und nennt die Quelle. Quellen, die das Modell erfindet, werden verworfen.
 - **Funktioniert auch ohne Sprachmodell:** Ohne API-Schlüssel läuft die App in einem regelbasierten Offline-Modus. Pro Besuch sind die KI-Aufrufe begrenzt.
 
@@ -54,7 +55,7 @@ pip install pytest ruff
 ruff check . && pytest
 ```
 
-Die 28 Tests prüfen Bewertung, Ampel, Zeitersparnis, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
+Die 32 Tests prüfen Bewertung, Ampel, Zeitersparnis, AI-Act-Einstufung, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
 
 ## Aufbau
 

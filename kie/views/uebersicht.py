@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 
 from .. import ui
+from ..aiact import classify
 from ..i18n import T, lang, status
 from ..scoring import ampel, it_status, ranking, score, time_saving
 
@@ -37,6 +38,8 @@ def render() -> None:
                           + f'<div class="kie-ampel {kind}">{ui.esc(text)}</div>')
                 it_text, it_kind = ui.it_badge(it_status(u["it"].get("antworten", {}), lang())[0])
                 badges += f'<div class="kie-ampel {it_kind}">{ui.esc(it_text)}</div>'
+                ai_text, ai_kind = ui.aiact_badge(classify(u["aiact"].get("antworten", {}))[0])
+                badges += f'<div class="kie-ampel {ai_kind}">{ui.esc(ai_text)}</div>'
                 st.markdown(f'<div class="kie-card" lang="{lang()}"><h4>{u["id"]}. {ui.esc(u["titel"])}</h4>'
                             f'<div class="kie-muted">{ui.esc(u["fachbereich"])}</div>{badges}</div>', unsafe_allow_html=True)
             if not items:

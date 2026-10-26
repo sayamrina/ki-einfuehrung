@@ -128,6 +128,23 @@ def usecases() -> list[dict]:
                              "datum": "2026-09-22"},
             "tests": [], "grenzen": "",
         },
+        {
+            "id": "G", "titel": "Vorauswahl von Bewerbungen für Fahrerstellen", "fachbereich": "Personal",
+            "status": "Bewertung", "faelle_pro_monat": 150,
+            "steckbrief": {
+                "problem": "Für jede Fahrerstelle kommen viele Bewerbungen; das Sichten von Führerscheinklassen und Nachweisen dauert lange.",
+                "ziel": "Bewerbungen nach Mindestanforderungen vorsortieren und eine Rangliste vorschlagen.",
+                "nutzende": "Personalabteilung, 3 Personen", "daten": "Lebensläufe, Führerscheinklassen, Nachweise",
+                "schnittstellen": "Bewerbermanagement-System",
+                "erfolgskriterien": ["Sichtung pro Bewerbung unter 3 Minuten", "Keine Benachteiligung nach Alter, Geschlecht oder Herkunft"],
+                "datenschutz_hinweise": ["Personenbezogene Daten von Bewerbenden", "Betriebsrat einbinden"],
+                "offene_fragen": ["Reicht eine reine Prüfung der Mindestanforderungen ohne Rangliste?"],
+            },
+            "prozess": _steps(("Unterlagen öffnen und Nachweise prüfen", 6, True, 1), ("Eignung einschätzen", 4, True, 2)),
+            "bewertung": {"nutzen": 4, "aufwand": 3, "umsetzbarkeit": 3, "risiko": 5},
+            "datenschutz": {"antworten": {}, "freigabe": "offen", "kommentar": ""},
+            "entscheidung": {}, "tests": [], "grenzen": "",
+        },
     ]
 
 

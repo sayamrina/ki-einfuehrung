@@ -5,7 +5,7 @@ LANGS = {"de": "Deutsch", "en": "English"}
 
 STATUS_EN = {"Idee": "Idea", "Bewertung": "Assessment", "Entscheidung": "Decision", "Prototyp": "Prototype",
              "Pilot": "Pilot", "Einführung": "Rollout", "Zurückgestellt": "On hold"}
-ROLE_EN = {"Fachbereich": "Business unit", "AI Manager": "AI Manager", "Datenschutz": "Data protection", "IT": "IT",
+ROLE_EN = {"Fachbereich": "Business unit", "AI Manager": "AI Manager", "Datenschutz": "Data protection", "IT": "IT", "Compliance": "Compliance",
            "Geschäftsführung": "Management"}
 DECISION_EN = {"Freigegeben": "Approved", "Zurückgestellt": "On hold", "Abgelehnt": "Rejected"}
 DS_RELEASE_EN = {"offen": "open", "freigegeben": "approved", "nicht freigegeben": "not approved"}

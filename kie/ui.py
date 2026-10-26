@@ -51,6 +51,20 @@ def it_badge(level: str) -> tuple[str, str]:
     return IT_BADGE[lang()][level]
 
 
+AIACT_BADGE = {
+    "de": {"offen": ("⚪ AI Act: offen", ""), "verboten": ("⛔ AI Act: verboten", "bad"), "hoch": ("🔴 AI Act: Hochrisiko", "bad"),
+           "begrenzt": ("🟡 AI Act: begrenzt", "warn"), "minimal": ("🟢 AI Act: minimal", "ok")},
+    "en": {"offen": ("⚪ AI Act: open", ""), "verboten": ("⛔ AI Act: prohibited", "bad"), "hoch": ("🔴 AI Act: high risk", "bad"),
+           "begrenzt": ("🟡 AI Act: limited", "warn"), "minimal": ("🟢 AI Act: minimal", "ok")},
+}
+
+
+def aiact_badge(level: str) -> tuple[str, str]:
+    from .i18n import lang
+
+    return AIACT_BADGE[lang()][level]
+
+
 def esc(text) -> str:
     return html.escape(str(text))
 

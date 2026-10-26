@@ -27,7 +27,7 @@ def test_submit_idea_creates_usecase_and_log(monkeypatch):
     at = page("idee", "Fachbereich")
     at.button[0].click().run()  # form submit: "Mit KI strukturieren"
     assert not at.exception
-    assert len(at.session_state["usecases"]) == 7
+    assert len(at.session_state["usecases"]) == 8
     assert at.session_state["log"][-1]["aktion"] == "Idee eingereicht"
     assert "KENNZEICHEN" in at.code[0].value  # text sent to the model is pseudonymised
 
@@ -72,3 +72,18 @@ def test_it_check_needed_before_approval(monkeypatch):
     at = page("usecase", "Geschäftsführung")
     at.selectbox(key="uc_select").set_value("C").run()
     assert any("IT" in w.value for w in at.warning)
+
+
+def test_ai_act_confirmation_is_needed_before_approval(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    at = page("usecase", "Compliance")
+    assert not at.exception
+    assert any(b.label == "Einstufung bestätigen" for b in at.button)
+    at = page("usecase", "IT")
+    assert not any(b.label == "Einstufung bestätigen" for b in at.button)
+    # G: CV pre-screening is high risk and not confirmed -> management sees Compliance as missing
+    at = page("usecase", "Geschäftsführung")
+    at.selectbox(key="uc_select").set_value("G").run()
+    assert not at.exception
+    assert any("Compliance" in w.value for w in at.warning)
+    assert any("Hochrisiko" in e.value for e in at.error)

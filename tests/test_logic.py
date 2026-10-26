@@ -12,7 +12,7 @@ def test_score_and_ranking_follow_the_formula():
     ucs = seed.usecases()
     assert score({"nutzen": 5, "aufwand": 2, "umsetzbarkeit": 5, "risiko": 2}) == 6
     ranks = ranking(ucs)
-    assert ranks["A"] == 1 and ranks["D"] == 2 and ranks["F"] == 6
+    assert ranks["A"] == 1 and ranks["D"] == 2 and ranks["F"] == 7
     assert ranks["C"] == ranks["E"] == 3  # gleiche Punktzahl, gleicher Rang
 
 
@@ -59,3 +59,31 @@ def test_it_status_levels():
     assert it_status({"schnittstelle": True, "hosting": True, "anmeldung": True})[0] == "gelb"
     level, done, hints = it_status({"schnittstelle": True})
     assert level == "rot" and done == 1 and len(hints) == 4
+
+
+def test_aiact_classification_follows_the_order_of_the_law():
+    from kie.aiact import classify, duties
+
+    assert classify({}) == ("offen", [])
+    assert classify({"chatbot": False})[0] == "minimal"
+    assert classify({"emotion_work": True, "hr": True})[0] == "verboten"  # prohibited beats high risk
+    assert classify({"hr": True}) == ("hoch", ["Anhang III Nr. 4"])
+    assert classify({"product_safety": True})[0] == "hoch"
+    assert classify({"chatbot": True})[0] == "begrenzt"
+    assert duties("offen") == []
+    assert any("Art. 4" in d for d in duties("minimal", "en"))
+
+
+def test_aiact_exception_never_applies_with_profiling():
+    from kie.aiact import classify
+
+    assert classify({"education": True, "narrow_task": True}) == ("minimal", ["Art. 6 (3)"])
+    assert classify({"hr": True, "narrow_task": True, "profiling": True})[0] == "hoch"
+    assert classify({"hr": True, "narrow_task": True, "chatbot": True}) == ("begrenzt", ["Art. 6 (3)", "Art. 50 (1)"])
+
+
+def test_gxp_hints_only_when_relevant():
+    from kie.aiact import gxp_hints
+
+    assert gxp_hints({}) == []
+    assert any("Annex 11" in h for h in gxp_hints({"gxp_records": True}, "en"))

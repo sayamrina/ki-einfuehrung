@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from .. import llm, pdf, state, ui
+from .. import aiact, llm, pdf, state, ui
 from ..i18n import T, decision, lang, release, role, status, verdict
 from ..knowledge import Index, load_sections
 from ..privacy import pseudonymise
@@ -24,8 +24,8 @@ def knowledge_index(language: str) -> Index:
 def render() -> None:
     ucs = st.session_state.usecases
     ui.hero(T("Anwendungsfall bearbeiten", "Work on a use case"),
-            T("Steckbrief, Prozess, Datenschutz, IT, Bewertung, Entscheidung und Tests: jeder Schritt wird festgehalten.",
-              "Brief, process, data protection, IT, assessment, decision and tests: every step is recorded."))
+            T("Steckbrief, Prozess, Datenschutz, AI Act, IT, Bewertung, Entscheidung und Tests: jeder Schritt wird festgehalten.",
+              "Brief, process, data protection, AI Act, IT, assessment, decision and tests: every step is recorded."))
     labels = {u["id"]: f'{u["id"]}. {u["titel"]} ({status(u["status"])})' for u in ucs}
     uid = st.selectbox(T("Anwendungsfall", "Use case"), list(labels), format_func=labels.get, key="uc_select")
     uc = state.usecase(uid)
@@ -33,11 +33,12 @@ def render() -> None:
     level = ampel(uc["datenschutz"].get("antworten", {}), lang())[0]
     text, kind = ui.ampel_badge(level)
     it_text, it_kind = ui.it_badge(it_status(uc["it"].get("antworten", {}), lang())[0])
+    ai_text, ai_kind = ui.aiact_badge(aiact.classify(uc["aiact"].get("antworten", {}))[0])
     st.markdown(ui.badge(uc["fachbereich"]) + ui.badge(f"Status: {status(uc['status'])}") + ui.badge(T("Rang ", "Rank ") + str(rank))
-                + ui.badge(text, kind) + ui.badge(it_text, it_kind), unsafe_allow_html=True)
+                + ui.badge(text, kind) + ui.badge(it_text, it_kind) + ui.badge(ai_text, ai_kind), unsafe_allow_html=True)
 
     tabs = st.tabs([T("Steckbrief", "Brief"), T("Prozessaufnahme", "Process mapping"), T("Datenschutz-Check", "Data protection check"),
-                    T("IT-Check", "IT check"), T("Bewertung", "Assessment"), T("Entscheidung", "Decision"), T("Prüfstand", "Test bench"), T("Verlauf", "History")])
+                    T("EU AI Act", "EU AI Act"), T("IT-Check", "IT check"), T("Bewertung", "Assessment"), T("Entscheidung", "Decision"), T("Prüfstand", "Test bench"), T("Verlauf", "History")])
     with tabs[0]:
         steckbrief(uc)
     with tabs[1]:
@@ -45,14 +46,16 @@ def render() -> None:
     with tabs[2]:
         datenschutz(uc)
     with tabs[3]:
-        it_check(uc)
+        ai_act(uc)
     with tabs[4]:
-        bewertung(uc, rank)
+        it_check(uc)
     with tabs[5]:
-        entscheidung(uc, rank)
+        bewertung(uc, rank)
     with tabs[6]:
-        pruefstand(uc)
+        entscheidung(uc, rank)
     with tabs[7]:
+        pruefstand(uc)
+    with tabs[8]:
         verlauf(uc)
 
 
@@ -148,6 +151,77 @@ def datenschutz(uc: dict) -> None:
         state.deny_hint("datenschutz_freigeben")
 
 
+def ai_act(uc: dict) -> None:
+    ai = uc["aiact"]
+    answers = dict(ai.get("antworten") or {})
+    gxp = dict(ai.get("gxp") or {})
+    en = lang() == "en"
+    editable = state.can("aiact_einstufen")
+    st.markdown(T("Einstufung nach der KI-Verordnung (EU) 2024/1689, Schritt für Schritt wie im Gesetz: verbotene Praktiken, "
+                  "Hochrisiko, Transparenzpflichten. Dazu ein GxP-Check für regulierte Prozesse.",
+                  "Classification under the AI Act (EU) 2024/1689, step by step as in the law: prohibited practices, high risk, "
+                  "transparency obligations. Plus a GxP check for regulated processes."))
+
+    def ask(items, store, prefix):
+        for q in items:
+            label = (q[2] if en else q[1]) + (f" · *{aiact.ref(q[3], lang())}*" if len(q) > 3 else "")
+            store[q[0]] = st.toggle(label, store.get(q[0], False), disabled=not editable, key=f"{prefix}_{uc['id']}_{q[0]}")
+
+    st.markdown(f"**1. {T('Verbotene Praktiken', 'Prohibited practices')}**")
+    ask(aiact.PROHIBITED, answers, "ai")
+    st.markdown(f"**2. {T('Hochrisiko-Bereiche', 'High-risk areas')}**")
+    ask(aiact.HIGH_RISK, answers, "ai")
+    if any(answers.get(q[0]) for q in aiact.HIGH_RISK if q[0] != "product_safety"):
+        ask([aiact.PROFILING, aiact.EXCEPTION], answers, "ai")
+    st.markdown(f"**3. {T('Transparenz', 'Transparency')}**")
+    ask(aiact.TRANSPARENCY, answers, "ai")
+    st.markdown(f"**4. {T('GxP (Pharma und Medizinprodukte)', 'GxP (pharma and medical devices)')}**")
+    ask(aiact.GXP, gxp, "gxp")
+
+    level, reasons = aiact.classify(answers)
+    kind = {"offen": "info", "verboten": "error", "hoch": "error", "begrenzt": "warning", "minimal": "success"}[level]
+    getattr(st, kind)(aiact.LABEL[lang()][level] + (f" ({aiact.ref(', '.join(reasons), lang())})" if reasons else ""))
+    for duty in aiact.duties(level, lang()):
+        st.markdown(f"- {duty}")
+    if aiact.gxp_relevant(gxp):
+        st.warning(T("GxP-relevant: zusätzlich zur AI-Act-Einstufung gelten die GMP-Anforderungen an computergestützte Systeme.",
+                     "GxP-relevant: GMP requirements for computerised systems apply in addition to the AI Act class."))
+        for hint in aiact.gxp_hints(gxp, lang()):
+            st.markdown(f"- {hint}")
+    st.caption(T("Orientierungshilfe für das Gespräch mit Compliance und Recht, keine Rechtsberatung. Fristen und Leitlinien der "
+                 "EU-Kommission vor der Freigabe prüfen.",
+                 "Guidance for the conversation with Compliance and Legal, not legal advice. Check deadlines and the European "
+                 "Commission's guidelines before approval."))
+    if editable and st.button(T("Einstufung speichern", "Save classification"), key=f"ai_save_{uc['id']}"):
+        ai.update(antworten=answers, gxp=gxp)
+        state.log(uc["id"], T("AI-Act-Einstufung gespeichert", "AI Act classification saved"), aiact.LABEL[lang()][level])
+        st.success(T("Gespeichert.", "Saved."))
+    if not editable:
+        state.deny_hint("aiact_einstufen")
+    st.divider()
+    st.markdown(f"**{T('Bestätigung durch Compliance', 'Confirmation by Compliance')}:** {release(ai.get('freigabe', 'offen'))}"
+                + (f" · {ai['kommentar']}" if ai.get("kommentar") else ""))
+    if state.can("aiact_freigeben"):
+        comment = st.text_input(T("Kommentar / Auflagen", "Comment / conditions"), key=f"ai_comment_{uc['id']}")
+        a, b = st.columns(2)
+        blocked = level in ("verboten", "offen") or (level == "hoch" and not comment)
+        if a.button(T("Einstufung bestätigen", "Confirm classification"), key=f"ai_ok_{uc['id']}", disabled=blocked):
+            ai.update(freigabe="freigegeben", kommentar=comment, antworten=answers, gxp=gxp)
+            state.log(uc["id"], T("AI-Act-Einstufung bestätigt", "AI Act classification confirmed"), aiact.LABEL[lang()][level])
+            st.rerun()
+        if b.button(T("Nicht freigeben", "Do not approve"), key=f"ai_no_{uc['id']}"):
+            ai.update(freigabe="nicht freigegeben", kommentar=comment, antworten=answers, gxp=gxp)
+            state.log(uc["id"], T("AI Act: nicht freigegeben", "AI Act: not approved"), comment)
+            st.rerun()
+        if level == "verboten":
+            st.caption(T("Verbotene Praktiken können nicht freigegeben werden.", "Prohibited practices cannot be approved."))
+        elif level == "hoch":
+            st.caption(T("Hochrisiko: Bestätigung nur mit dokumentierten Auflagen (Aufsicht, Protokolle, Information der Beschäftigten).",
+                         "High risk: confirmation only with documented conditions (oversight, logs, informing employees)."))
+    else:
+        state.deny_hint("aiact_freigeben")
+
+
 def it_check(uc: dict) -> None:
     it = uc["it"]
     answers = dict(it.get("antworten") or {})
@@ -225,10 +299,11 @@ def entscheidung(uc: dict, rank: int) -> None:
     if state.can("entscheiden"):
         ds_ok = uc["datenschutz"].get("freigabe") == "freigegeben"
         it_ok = uc["it"].get("freigabe") == "freigegeben"
-        missing = [x for x, ok in [(T("Datenschutz", "data protection"), ds_ok), ("IT", it_ok)] if not ok]
+        ai_ok = uc["aiact"].get("freigabe") == "freigegeben"
+        missing = [x for x, ok in [(T("Datenschutz", "data protection"), ds_ok), ("Compliance (AI Act)", ai_ok), ("IT", it_ok)] if not ok]
         if missing:
-            st.warning(T(f"Noch keine Freigabe von: {' und '.join(missing)}. Eine Umsetzung ist erst danach möglich.",
-                         f"No approval yet from: {' and '.join(missing)}. Implementation is only possible afterwards."))
+            st.warning(T(f"Noch keine Freigabe von: {', '.join(missing)}. Eine Umsetzung ist erst danach möglich.",
+                         f"No approval yet from: {', '.join(missing)}. Implementation is only possible afterwards."))
         options = {"Freigegeben": T("Freigeben", "Approve"), "Zurückgestellt": T("Zurückstellen", "Put on hold"),
                    "Abgelehnt": T("Ablehnen", "Reject")}
         with st.form(f"dec_{uc['id']}"):

@@ -122,6 +122,23 @@ def usecases() -> list[dict]:
                              "datum": "2026-09-22"},
             "tests": [], "grenzen": "",
         },
+        {
+            "id": "G", "titel": "Pre-screening applications for driver jobs", "fachbereich": "HR",
+            "status": "Bewertung", "faelle_pro_monat": 150,
+            "steckbrief": {
+                "problem": "Every driver vacancy attracts many applications; checking licence classes and certificates takes a long time.",
+                "ziel": "Pre-sort applications against the minimum requirements and suggest a ranking.",
+                "nutzende": "HR department, 3 people", "daten": "CVs, licence classes, certificates",
+                "schnittstellen": "Applicant tracking system",
+                "erfolgskriterien": ["Under 3 minutes per application", "No disadvantage by age, gender or origin"],
+                "datenschutz_hinweise": ["Personal data of applicants", "Involve the works council"],
+                "offene_fragen": ["Would a check of minimum requirements without a ranking be enough?"],
+            },
+            "prozess": _steps(("Open documents and check certificates", 6, True, 1), ("Judge suitability", 4, True, 2)),
+            "bewertung": {"nutzen": 4, "aufwand": 3, "umsetzbarkeit": 3, "risiko": 5},
+            "datenschutz": {"antworten": {}, "freigabe": "offen", "kommentar": ""},
+            "entscheidung": {}, "tests": [], "grenzen": "",
+        },
     ]
 
 

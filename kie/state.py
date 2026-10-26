@@ -7,7 +7,7 @@ import streamlit as st
 from . import seed, seed_en
 from .i18n import T, role
 
-ROLES = ["Fachbereich", "AI Manager", "Datenschutz", "IT", "Geschäftsführung"]
+ROLES = ["Fachbereich", "AI Manager", "Datenschutz", "IT", "Compliance", "Geschäftsführung"]
 
 # Wer darf was? (wird in der Oberfläche durchgesetzt und auf der Seite „Protokoll und Rechte“ angezeigt)
 RIGHTS = {
@@ -17,6 +17,8 @@ RIGHTS = {
     "bewerten": {"AI Manager"},
     "datenschutz_freigeben": {"Datenschutz"},
     "it_freigeben": {"IT"},
+    "aiact_einstufen": {"AI Manager", "Compliance"},
+    "aiact_freigeben": {"Compliance"},
     "entscheiden": {"Geschäftsführung"},
     "testen": {"AI Manager", "Fachbereich", "IT"},
     "status_aendern": {"AI Manager"},
@@ -29,6 +31,8 @@ RIGHT_LABELS = {
     "bewerten": ("Anwendungsfall bewerten", "Assess the use case"),
     "datenschutz_freigeben": ("Datenschutz freigeben", "Approve data protection"),
     "it_freigeben": ("Technisch freigeben (IT-Check)", "Technical approval (IT check)"),
+    "aiact_einstufen": ("AI-Act-Einstufung vorbereiten", "Prepare the AI Act classification"),
+    "aiact_freigeben": ("AI-Act-Einstufung bestätigen", "Confirm the AI Act classification"),
     "entscheiden": ("Über Umsetzung entscheiden", "Decide on implementation"),
     "testen": ("Prüfstand: Tests ausführen", "Test bench: run tests"),
     "status_aendern": ("Projektstatus ändern", "Change project status"),
@@ -48,6 +52,25 @@ IT_SEED = {
 }
 
 
+# AI-Act-Einstufung der Beispieldaten: (Antworten, Freigabe, Kommentar DE, Kommentar EN)
+AIACT_SEED = {
+    "A": ({"chatbot": True}, "freigegeben", "Hinweis „Sie chatten mit einer KI“ ist im Assistenten sichtbar.",
+          "The notice “You are chatting with an AI” is shown in the assistant."),
+    "B": ({}, "offen", "", ""),
+    "C": ({"synthetic": True}, "freigegeben", "Entwürfe werden vor dem Versand von einer Person geprüft und angepasst.",
+          "Drafts are checked and edited by a person before they are sent."),
+    "D": ({"education": True, "narrow_task": True}, "freigegeben",
+          "Übungsfragen bewerten niemanden; Ausnahme nach Art. 6 (3) dokumentiert.",
+          "Practice questions do not grade anyone; exception under Art. 6 (3) documented."),
+    "G": ({"hr": True, "profiling": True}, "offen", "", ""),
+}
+
+
+def aiact_seed(uid: str, lang: str) -> dict:
+    answers, release, de, en = AIACT_SEED.get(uid, ({}, "offen", "", ""))
+    return {"antworten": dict(answers), "gxp": {}, "freigabe": release, "kommentar": en if lang == "en" else de}
+
+
 def it_seed(uid: str, lang: str) -> dict:
     if uid not in IT_SEED:
         return {"antworten": {}, "systeme": "", "personentage": 0, "freigabe": "offen", "kommentar": ""}
@@ -64,6 +87,7 @@ def load_sample_data(lang: str) -> None:
     s.radar = copy.deepcopy(src.radar())
     for u in s.usecases:
         u.setdefault("it", it_seed(u["id"], lang))
+        u.setdefault("aiact", aiact_seed(u["id"], lang))
     s.course_stats = copy.deepcopy(seed.course_stats())
     s.quiz_result = None
     s.data_lang = lang

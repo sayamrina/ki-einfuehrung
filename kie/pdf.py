@@ -4,6 +4,8 @@ from pathlib import Path
 
 from fpdf import FPDF
 
+from .aiact import LABEL as AIACT_LABEL
+from .aiact import classify, gxp_relevant, ref
 from .i18n import DECISION_EN, DS_RELEASE_EN, STATUS_EN
 from .scoring import AMPEL_LABEL, IT_LABEL, ampel, it_status, score, time_saving
 
@@ -55,6 +57,10 @@ def entscheidungsvorlage(uc: dict, rank: int, lang: str = "de") -> bytes:
     it = uc.get("it", {})
     it_release = it.get("freigabe", "offen")
     it_release = DS_RELEASE_EN.get(it_release, it_release) if en else it_release
+    ai = uc.get("aiact", {})
+    ai_level, ai_reasons = classify(ai.get("antworten", {}))
+    ai_release = ai.get("freigabe", "offen")
+    ai_release = DS_RELEASE_EN.get(ai_release, ai_release) if en else ai_release
     rows = [
         ("Problem", sb.get("problem", "")), (t("Ziel", "Goal"), sb.get("ziel", "")), (t("Nutzende", "Users"), sb.get("nutzende", "")),
         (t("Daten", "Data"), sb.get("daten", "")), (t("Schnittstellen", "Systems"), sb.get("schnittstellen", "")),
@@ -68,6 +74,9 @@ def entscheidungsvorlage(uc: dict, rank: int, lang: str = "de") -> bytes:
            f"{saving.minutes_before:g} → {saving.minutes_after:g} minutes per case; about {saving.hours_per_month:g} hours per month "
            f"at {uc['faelle_pro_monat']} cases")),
         (t("Datenschutz", "Data protection"), f"{_clean(AMPEL_LABEL[lang][level])}; {t('Freigabe', 'Approval')}: {release}"),
+        ("EU AI Act", f"{_clean(AIACT_LABEL[lang][ai_level])}" + (f" ({ref(', '.join(ai_reasons), lang)})" if ai_reasons else "")
+                      + f"; {t('Bestätigung Compliance', 'Compliance confirmation')}: {ai_release}"
+                      + (t("; GxP-relevant", "; GxP-relevant") if gxp_relevant(ai.get("gxp", {})) else "")),
         ("IT", f"{_clean(IT_LABEL[lang][it_status(it.get('antworten', {}), lang)[0]])}; {t('Freigabe', 'Approval')}: {it_release}"
                + (f"; {it['systeme']}" if it.get("systeme") else "")),
         (t("Erfolgskriterien", "Success criteria"), "\n".join(f"• {k}" for k in sb.get("erfolgskriterien", []))),
