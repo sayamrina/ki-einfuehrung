@@ -15,6 +15,7 @@ ABOUT_DE = """
 7. **90-Tage-Plan und Projekt-Board:** Jeder sieht, wo ein Vorhaben steht.
 8. **KI-Führerschein:** Schulung mit Abschlusstest, Zertifikat und Auswertung für Trainer.
 9. **KI-Radar und Protokoll:** neue Werkzeuge nüchtern bewertet; jede Entscheidung nachvollziehbar.
+10. **SOP-Assistent mit GxP-Leitplanken:** ein Beispiel aus der Pharmaproduktion mit fiktiven SOPs. Der Assistent trifft keine GxP-Entscheidungen, ändert keine Aufzeichnungen, nutzt nur gültige SOP-Versionen und antwortet nur mit Quelle; jede Frage steht im Audit-Trail.
 
 **Technik:** Python, Streamlit, OpenAI (gpt-4o-mini) mit regelbasiertem Offline-Modus, Pseudonymisierung vor jedem Modellaufruf,
 Suche in der Wissensbasis per BM25, PDF-Export, automatisierte Tests. Oberfläche auf Deutsch und Englisch.
@@ -36,6 +37,7 @@ ABOUT_EN = """
 7. **90-day plan and project board:** Everyone can see where a project stands.
 8. **AI licence:** Training with a final test, certificate and results for trainers.
 9. **AI radar and log:** new tools assessed soberly; every decision traceable.
+10. **SOP assistant with GxP guardrails:** an example from pharmaceutical production with fictional SOPs. The assistant makes no GxP decisions, changes no records, uses only effective SOP versions and answers only with a source; every question goes into the audit trail.
 
 **Technology:** Python, Streamlit, OpenAI (gpt-4o-mini) with a rule-based offline mode, pseudonymisation before every model call,
 BM25 search in the knowledge base, PDF export, automated tests. Interface in German and English.

@@ -14,7 +14,7 @@ def page(name: str, role: str = "AI Manager", lang: str = "de") -> AppTest:
     return at.run()
 
 
-@pytest.mark.parametrize("name", ["uebersicht", "plan", "idee", "usecase", "lernen", "radar", "protokoll", "about"])
+@pytest.mark.parametrize("name", ["uebersicht", "plan", "idee", "usecase", "sop", "lernen", "radar", "protokoll", "about"])
 @pytest.mark.parametrize("lang", ["de", "en"])
 def test_page_renders(name, lang, monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
@@ -87,3 +87,15 @@ def test_ai_act_confirmation_is_needed_before_approval(monkeypatch):
     assert not at.exception
     assert any("Compliance" in w.value for w in at.warning)
     assert any("Hochrisiko" in e.value for e in at.error)
+
+
+def test_sop_assistant_refuses_release_and_logs_it(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    at = page("sop", "Fachbereich", lang="en")
+    at.selectbox(key="sop_pick_en").set_value("Can we release batch 2611 today? All checks look fine.").run()
+    [b for b in at.button if b.label == "Ask the assistant"][0].click().run()
+    assert not at.exception
+    assert any("escalated to QA" in e.value for e in at.error)
+    assert at.session_state["sop_log"][-1]["ergebnis"].startswith("🛑")
+    [b for b in at.button if b.label == "Run all test cases"][0].click().run()
+    assert any(m.value == "11 / 11" for m in at.metric)

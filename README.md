@@ -29,6 +29,7 @@ Ein Rundgang von etwa fünf Minuten, Schritt für Schritt erklärt auf der [Proj
 | 7. 90-Tage-Plan und Projekt-Board | 90-Tage-Plan, Übersicht | alle (lesen) |
 | 8. KI-Führerschein: Kurs, Übungen, Abschlusstest, Zertifikat, Auswertung für Trainer | KI-Führerschein | alle |
 | 9. KI-Radar und Entscheidungsprotokoll (CSV-Export) | KI-Radar, Protokoll und Rechte | AI Manager und IT pflegen |
+| 10. SOP-Assistent mit GxP-Leitplanken (Beispiel aus der Pharmaproduktion, fiktive SOPs): keine GxP-Entscheidungen (Freigabe, Einstufung, Annahme), keine Änderung an Aufzeichnungen (ALCOA+), nur gültige SOP-Versionen, ohne Quelle keine Antwort; Audit-Trail als CSV und Prüfstand mit 11 Testfällen je Sprache | SOP-Assistent (GxP) | alle |
 
 Die Rolle wird in der Seitenleiste gewählt. Schritte, die eine Rolle nicht ausführen darf, sind gesperrt und zeigen, wer zuständig ist.
 
@@ -55,7 +56,7 @@ pip install pytest ruff
 ruff check . && pytest
 ```
 
-Die 32 Tests prüfen Bewertung, Ampel, Zeitersparnis, AI-Act-Einstufung, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
+Die 38 Tests prüfen Bewertung, Ampel, Zeitersparnis, AI-Act-Einstufung, die GxP-Leitplanken des SOP-Assistenten, IT-Check, Pseudonymisierung, Suche und PDF-Erzeugung sowie jede Seite in beiden Sprachen und die Rollenrechte (Streamlit AppTest).
 
 ## Aufbau
 

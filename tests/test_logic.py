@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from kie import pdf, seed
 from kie.knowledge import Index, load_sections
 from kie.privacy import pseudonymise
@@ -87,3 +89,26 @@ def test_gxp_hints_only_when_relevant():
 
     assert gxp_hints({}) == []
     assert any("Annex 11" in h for h in gxp_hints({"gxp_records": True}, "en"))
+
+
+@pytest.mark.parametrize("lang", ["de", "en"])
+def test_sop_guardrails_pass_every_test_case(lang):
+    from pathlib import Path
+
+    from kie.sop import Assistant, run_tests
+
+    rows = run_tests(Assistant(Path(__file__).resolve().parents[1] / "data" / f"sop_{lang}"), lang)
+    assert all(r["ok"] for r in rows), [r for r in rows if not r["ok"]]
+
+
+def test_sop_never_uses_superseded_versions_and_drops_invented_sources():
+    from pathlib import Path
+
+    from kie.sop import Assistant, answer
+
+    a = Assistant(Path(__file__).resolve().parents[1] / "data" / "sop_en")
+    result = answer(a, "What AQL applies to critical defects in visual inspection?", "en")
+    assert "0.065" in result.text and "0.1 " not in result.text
+    assert result.superseded == ["SOP-PR-031 v2.1"]
+    invented = answer(a, "What AQL applies to critical defects?", "en", model=lambda q, hits: ("AQL 0.1", [999]))
+    assert invented.kind == "keine_quelle"
